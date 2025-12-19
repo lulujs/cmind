@@ -1,0 +1,13 @@
+@template(right)
+@theme(fresh-blue)
+
+# 主题 @id(root001)
+  - 节点一 @id(node001)
+    - 子节点 @id(node002)
+  - 节点二 @id(node003) @progress(2)
+    - 任务A @id(node004)
+    - 任务B @id(node005)
+      - 详情 @id(node006)
+  - English @id(node007)
+    - 混合中英文test @id(node008)
+    - abc @id(node009)

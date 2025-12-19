@@ -1,0 +1,114 @@
+# Implementation Plan
+
+- [x] 1. Update Langium grammar for CMind DSL
+  - [x] 1.1 Define complete CMind grammar
+    - Update `packages/language/src/cmind.langium` with new grammar
+    - Define terminal rules for TEXT handling (node text with spaces)
+    - Define Metadata rules for @template and @theme
+    - Define RootNode rule with # prefix
+    - Define ChildNode rule with - prefix (flat structure, indentation handled by generator)
+    - Define Attribute rules (@priority, @progress, @bold, @italic)
+    - Keep existing comment rules (// and /* */)
+    - _Requirements: 1.1, 2.1, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 7.1, 7.2_
+  - [x] 1.2 Run langium:generate to create AST types
+    - Execute `npm run langium:generate`
+    - Verify generated ast.ts contains expected types
+    - _Requirements: 1.1_
+
+- [x] 2. Implement validator for CMind DSL
+  - [x] 2.1 Add validation for single root node requirement
+    - Report error if multiple # declarations exist
+    - Report error if no # declaration exists
+    - _Requirements: 1.2, 1.3_
+  - [x] 2.2 Add validation for priority and progress ranges
+    - Validate priority is between 1-9
+    - Validate progress is between 1-9
+    - _Requirements: 3.6_
+  - [x] 2.3 Add validation for inconsistent indentation
+    - Report warning if mixing tabs and spaces incorrectly
+    - _Requirements: 2.4_
+  - [ ]* 2.4 Write property test for attribute parsing
+    - **Property 3: Attribute Parsing Completeness**
+    - **Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5**
+
+- [x] 3. Update parsing tests for new grammar
+  - [x] 3.1 Update parsing.test.ts for CMind DSL
+    - Test parsing simple root node
+    - Test parsing nested child nodes
+    - Test parsing nodes with attributes
+    - _Requirements: 1.1, 2.1, 3.1, 3.2, 3.3, 3.4_
+  - [x] 3.2 Update validating.test.ts for CMind DSL
+    - Test single root node validation
+    - Test priority/progress range validation
+    - _Requirements: 1.2, 1.3, 3.6_
+
+- [x] 4. Checkpoint - Ensure grammar and validation work
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [-] 5. Implement KityMinder JSON generator
+  - [x] 5.1 Create generator module structure
+    - Rewrite `packages/cli/src/generator.ts` with KityMinder interfaces
+    - Define generateId() and generateTimestamp() utilities
+    - _Requirements: 5.1, 5.2_
+  - [x] 5.2 Implement node traversal and JSON generation
+    - Traverse AST recursively to build KityMinder node tree
+    - Map attributes to KityMinder JSON fields
+    - _Requirements: 5.2, 5.3, 5.4_
+  - [x] 5.3 Handle default values for template and theme
+    - Use "right" as default template
+    - Use "fresh-blue" as default theme
+    - _Requirements: 7.3, 7.4_
+  - [x] 5.4 Write property test for JSON structure
+    - **Property 5: KityMinder JSON Structure**
+    - **Validates: Requirements 5.1, 5.2, 5.3, 5.4**
+
+- [x] 6. Implement Pretty Printer
+  - [x] 6.1 Create printer module structure
+    - Create `packages/cli/src/printer.ts` with print function
+    - _Requirements: 6.1_
+  - [x] 6.2 Implement metadata printing
+    - Print @template and @theme declarations
+    - _Requirements: 7.1, 7.2_
+  - [x] 6.3 Implement node tree printing with indentation
+    - Print root node with # prefix
+    - Print child nodes with - prefix and proper indentation
+    - Print attributes in consistent order
+    - _Requirements: 6.1, 6.2_
+  - [x] 6.4 Write property test for round-trip consistency
+    - **Property 6: Round-Trip Consistency (CRITICAL)**
+    - **Validates: Requirements 6.1, 6.2, 6.3**
+
+- [x] 7. Checkpoint - Ensure generator and printer work
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Update CLI to support new commands
+  - [x] 8.1 Update CLI main.ts for CMind DSL
+    - Remove old generate command
+    - Update imports for new AST types
+    - _Requirements: 1.1_
+  - [x] 8.2 Add parse command to output AST
+    - Parse .cmind file and output AST JSON
+    - _Requirements: 1.1, 2.1_
+  - [x] 8.3 Add generate command to output KityMinder JSON
+    - Parse .cmind file and generate .km file
+    - _Requirements: 5.1_
+  - [x] 8.4 Add print command to pretty-print from AST
+    - Parse .cmind file and output formatted DSL text
+    - _Requirements: 6.1_
+
+- [ ]* 9. Write remaining property tests
+  - [ ]* 9.1 Write property test for root node parsing
+    - **Property 1: Root Node Parsing**
+    - **Validates: Requirements 1.1**
+  - [ ]* 9.2 Write property test for tree structure preservation
+    - **Property 2: Tree Structure Preservation**
+    - **Validates: Requirements 2.1, 2.2, 2.3**
+  - [ ]* 9.3 Write property test for comments being ignored
+    - **Property 4: Comments Are Ignored**
+    - **Validates: Requirements 4.1, 4.2**
+  - [ ]* 9.4 Write property test for metadata parsing
+    - **Property 7: Metadata Parsing**
+    - **Validates: Requirements 7.1, 7.2**
+
+- [x] 10. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

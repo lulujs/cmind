@@ -1,0 +1,16 @@
+{
+    "projectName": "Cmind",
+    "languages": [
+        {
+            "id": "cmind",
+            "grammar": "src/cmind.langium",
+            "fileExtensions": [
+                "cmind"
+            ],
+            "textMate": {
+                "out": "syntaxes/cmind.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}
