@@ -2,6 +2,7 @@ import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
 import { CmindGeneratedModule, CmindGeneratedSharedModule } from './generated/module.js';
 import { CmindValidator, registerValidationChecks } from './cmind-validator.js';
+import { CmindCompletionProvider } from './cmind-completion-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -26,6 +27,9 @@ export type CmindServices = LangiumServices & CmindAddedServices
 export const CmindModule: Module<CmindServices, PartialLangiumServices & CmindAddedServices> = {
     validation: {
         CmindValidator: () => new CmindValidator()
+    },
+    lsp: {
+        CompletionProvider: (services) => new CmindCompletionProvider(services)
     }
 };
 
