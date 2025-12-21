@@ -2,16 +2,45 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import type * as vscode from 'vscode';
 import * as path from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
+import { ConversionService } from './conversion-service.js';
+import { CommandHandler } from './command-handler.js';
+import { FileWatcher } from './file-watcher.js';
+import { ConfigurationManager } from './configuration-manager.js';
 
 let client: LanguageClient;
+let conversionService: ConversionService;
+let commandHandler: CommandHandler;
+let fileWatcher: FileWatcher;
+let configurationManager: ConfigurationManager;
 
 // This function is called when the extension is activated.
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+    // Initialize configuration manager first
+    configurationManager = new ConfigurationManager();
+    
+    // Initialize services with configuration manager
+    conversionService = new ConversionService(configurationManager);
+    commandHandler = new CommandHandler(conversionService);
+    fileWatcher = new FileWatcher(conversionService);
+    
+    // Register commands and event handlers
+    commandHandler.registerCommands(context);
+    
+    // Start file watcher for auto-conversion
+    fileWatcher.startWatching(context);
+    
+    // Start language client
     client = await startLanguageClient(context);
 }
 
 // This function is called when the extension is deactivated.
 export function deactivate(): Thenable<void> | undefined {
+    // Clean up file watcher
+    if (fileWatcher) {
+        fileWatcher.dispose();
+    }
+    
+    // Stop language client
     if (client) {
         return client.stop();
     }

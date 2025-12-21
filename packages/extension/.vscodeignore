@@ -1,2 +1,13 @@
 .vscode/**
 .vscode-test/**
+src/**
+test/**
+node_modules/**
+*.tsbuildinfo
+tsconfig.json
+vitest.config.ts
+esbuild.mjs
+langium-quickstart.md
+.gitignore
+.eslintrc.*
+.prettierrc.*
