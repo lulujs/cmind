@@ -1,0 +1,7 @@
+@template(right)
+@theme(fresh-blue)
+
+# 主题 @id(root001)
+  - 节点1 @id(node001)
+  - 节点3 @id(node002)
+  - nnn @id(node003)

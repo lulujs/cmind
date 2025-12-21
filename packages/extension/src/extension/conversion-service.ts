@@ -153,6 +153,7 @@ export class ConversionService {
      * Parses a CMind file and returns the AST model
      * Adapted from CLI extractAstNode functionality
      * Enhanced with detailed error reporting including line numbers and locations
+     * Fixed: Force reload document content to avoid caching issues
      */
     private async parseFile(filePath: string): Promise<MindMap> {
         try {
@@ -169,10 +170,27 @@ export class ConversionService {
                 throw new FileSystemError(`Cannot read file: ${filePath}. ${this.formatFileSystemError(error)}`);
             }
 
-            // Create URI and parse the document
+            // Create URI
             const uri = URI.file(path.resolve(filePath));
-            const document = await this.services.shared.workspace.LangiumDocuments.getOrCreateDocument(uri);
             
+            // CRITICAL FIX: Force reload the document content to avoid caching issues
+            // The Langium document manager caches documents, which causes stale content
+            // to be used even after the file has been modified on disk.
+            const documents = this.services.shared.workspace.LangiumDocuments;
+            
+            // Remove any existing cached document for this URI
+            const existingDocument = documents.getDocument(uri);
+            if (existingDocument) {
+                documents.deleteDocument(uri);
+            }
+            
+            // Read the file content directly from disk to ensure we get the latest version
+            const fileContent = await fs.promises.readFile(filePath, 'utf-8');
+            
+            // Create a new document with the fresh content
+            const document = documents.createDocument(uri, fileContent);
+            
+            // Build the document with validation
             await this.services.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
             // Check for lexer errors with detailed location information

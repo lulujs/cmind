@@ -1,0 +1,38 @@
+{
+    "root": {
+        "data": {
+            "id": "root001",
+            "created": 1766330842063,
+            "text": "主题"
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "node001",
+                    "created": 1766330842063,
+                    "text": "节点1"
+                },
+                "children": []
+            },
+            {
+                "data": {
+                    "id": "node002",
+                    "created": 1766330842063,
+                    "text": "节点3"
+                },
+                "children": []
+            },
+            {
+                "data": {
+                    "id": "node003",
+                    "created": 1766330842063,
+                    "text": "nnn"
+                },
+                "children": []
+            }
+        ]
+    },
+    "template": "right",
+    "theme": "fresh-blue",
+    "version": "1.4.43"
+}
