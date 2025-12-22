@@ -6,6 +6,7 @@ import { NodeFileSystem } from 'langium/node';
 import { URI } from 'langium';
 import { ConfigurationManager } from './configuration-manager.js';
 import { NotificationService } from './notification-service.js';
+import { ErrorHandler, DetailedError } from './error-handler.js';
 
 // Import CLI functionality - we'll need to access these from the CLI package
 // For now, we'll implement the core functionality directly to avoid complex import issues
@@ -37,6 +38,7 @@ export interface ConversionResult {
     success: boolean;
     outputPath?: string;
     error?: string;
+    detailedError?: DetailedError;
 }
 
 /**
@@ -47,10 +49,12 @@ export class ConversionService {
     private readonly services = createCmindServices(NodeFileSystem).Cmind;
     private readonly configManager: ConfigurationManager;
     private readonly notificationService: NotificationService;
+    private readonly errorHandler: ErrorHandler;
 
     constructor(configManager?: ConfigurationManager) {
         this.configManager = configManager || new ConfigurationManager();
         this.notificationService = new NotificationService(this.configManager);
+        this.errorHandler = new ErrorHandler();
     }
 
     /**
@@ -65,17 +69,29 @@ export class ConversionService {
             try {
                 await fs.promises.access(filePath, fs.constants.R_OK);
             } catch (error) {
+                const detailedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'file_access_check'
+                });
+                
                 return {
                     success: false,
-                    error: `Cannot access file: ${filePath}. ${this.formatFileSystemError(error)}`
+                    error: `Cannot access file: ${filePath}. ${this.formatFileSystemError(error)}`,
+                    detailedError
                 };
             }
 
             const fileExtension = path.extname(filePath);
             if (fileExtension !== '.cmind') {
+                const detailedError = this.errorHandler.processError(
+                    new Error(`Invalid file extension. Expected .cmind, got ${fileExtension}`),
+                    { filePath, operation: 'file_validation' }
+                );
+                
                 return {
                     success: false,
-                    error: `Invalid file extension. Expected .cmind, got ${fileExtension}`
+                    error: `Invalid file extension. Expected .cmind, got ${fileExtension}`,
+                    detailedError
                 };
             }
 
@@ -94,23 +110,50 @@ export class ConversionService {
             };
 
         } catch (error) {
-            // Handle different error types with appropriate messages
-            if (error instanceof SyntaxError) {
-                return {
-                    success: false,
-                    error: `Syntax Error: ${error.message}`
-                };
-            } else if (error instanceof FileSystemError) {
-                return {
-                    success: false,
-                    error: `File System Error: ${error.message}`
-                };
-            } else {
-                return {
-                    success: false,
-                    error: `Conversion Error: ${this.formatError(error)}`
-                };
+            // Process error with enhanced error handler
+            const detailedError = this.errorHandler.processError(error, {
+                filePath,
+                operation: 'file_conversion'
+            });
+
+            // Attempt recovery if possible
+            const recovered = await this.errorHandler.attemptRecovery(detailedError, {
+                filePath,
+                operation: 'file_conversion',
+                timestamp: new Date()
+            });
+
+            if (recovered) {
+                // Retry conversion after recovery
+                try {
+                    const model = await this.parseFile(filePath);
+                    const resolvedOutputDir = outputDir || this.configManager.getResolvedOutputDirectory(filePath);
+                    const outputPath = await this.generateOutput(model, filePath, resolvedOutputDir);
+                    
+                    return {
+                        success: true,
+                        outputPath
+                    };
+                } catch (retryError) {
+                    const retryDetailedError = this.errorHandler.processError(retryError, {
+                        filePath,
+                        operation: 'file_conversion_retry',
+                        timestamp: new Date()
+                    });
+                    
+                    return {
+                        success: false,
+                        error: this.errorHandler.formatUserMessage(retryDetailedError),
+                        detailedError: retryDetailedError
+                    };
+                }
             }
+
+            return {
+                success: false,
+                error: this.errorHandler.formatUserMessage(detailedError),
+                detailedError
+            };
         }
     }
 
@@ -150,6 +193,20 @@ export class ConversionService {
     }
 
     /**
+     * Gets the error handler instance
+     */
+    getErrorHandler(): ErrorHandler {
+        return this.errorHandler;
+    }
+
+    /**
+     * Disposes of resources
+     */
+    dispose(): void {
+        this.errorHandler.dispose();
+    }
+
+    /**
      * Parses a CMind file and returns the AST model
      * Adapted from CLI extractAstNode functionality
      * Enhanced with detailed error reporting including line numbers and locations
@@ -160,14 +217,25 @@ export class ConversionService {
             // Check file extension
             const extensions = this.services.LanguageMetaData.fileExtensions;
             if (!extensions.includes(path.extname(filePath))) {
-                throw new SyntaxError(`Invalid file extension. Expected one of: ${extensions.join(', ')}, but got: ${path.extname(filePath)}`);
+                const error = new SyntaxError(`Invalid file extension. Expected one of: ${extensions.join(', ')}, but got: ${path.extname(filePath)}`);
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'file_extension_validation',
+                    timestamp: new Date()
+                });
+                throw new SyntaxError(this.errorHandler.formatUserMessage(processedError));
             }
 
             // Check file exists and is readable
             try {
                 await fs.promises.access(filePath, fs.constants.R_OK);
             } catch (error) {
-                throw new FileSystemError(`Cannot read file: ${filePath}. ${this.formatFileSystemError(error)}`);
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'file_access_validation',
+                    timestamp: new Date()
+                });
+                throw new FileSystemError(this.errorHandler.formatUserMessage(processedError));
             }
 
             // Create URI
@@ -197,64 +265,73 @@ export class ConversionService {
             const lexerErrors = document.parseResult?.lexerErrors ?? [];
             if (lexerErrors.length > 0) {
                 const detailedErrors = lexerErrors.map(error => {
-                    const line = error.line || 1;
-                    const column = error.column || 1;
-                    return `Line ${line}, Column ${column}: ${error.message}`;
+                    return this.errorHandler.processError(error, {
+                        filePath,
+                        operation: 'lexical_analysis',
+                        timestamp: new Date()
+                    });
                 });
-                throw new SyntaxError(`Lexer errors found:\n${detailedErrors.join('\n')}`);
+                
+                const combinedMessage = detailedErrors.map(e => this.errorHandler.formatUserMessage(e)).join('\n');
+                throw new SyntaxError(`Lexer errors found:\n${combinedMessage}`);
             }
 
             // Check for parser errors with detailed location information
             const parserErrors = document.parseResult?.parserErrors ?? [];
             if (parserErrors.length > 0) {
                 const detailedErrors = parserErrors.map(error => {
-                    const token = error.token;
-                    const line = token?.startLine || 1;
-                    const column = token?.startColumn || 1;
-                    const tokenText = token?.image ? ` (found: "${token.image}")` : '';
-                    return `Line ${line}, Column ${column}: ${error.message}${tokenText}`;
+                    return this.errorHandler.processError(error, {
+                        filePath,
+                        operation: 'syntax_parsing',
+                        timestamp: new Date()
+                    });
                 });
-                throw new SyntaxError(`Parser errors found:\n${detailedErrors.join('\n')}`);
+                
+                const combinedMessage = detailedErrors.map(e => this.errorHandler.formatUserMessage(e)).join('\n');
+                throw new SyntaxError(`Parser errors found:\n${combinedMessage}`);
             }
 
             // Check for validation errors with detailed location information
             const validationErrors = (document.diagnostics ?? []).filter(e => e.severity === 1);
             if (validationErrors.length > 0) {
                 const detailedErrors = validationErrors.map(error => {
-                    const line = error.range.start.line + 1;
-                    const column = error.range.start.character + 1;
-                    const endLine = error.range.end.line + 1;
-                    const endColumn = error.range.end.character + 1;
-                    
-                    let location = `Line ${line}`;
-                    if (line !== endLine) {
-                        location += `-${endLine}`;
-                    }
-                    if (column > 1 || endColumn > 1) {
-                        location += `, Column ${column}`;
-                        if (endColumn !== column) {
-                            location += `-${endColumn}`;
-                        }
-                    }
-                    
-                    return `${location}: ${error.message}`;
+                    return this.errorHandler.processError(error, {
+                        filePath,
+                        operation: 'semantic_validation',
+                        timestamp: new Date()
+                    });
                 });
-                throw new SyntaxError(`Validation errors found:\n${detailedErrors.join('\n')}`);
+                
+                const combinedMessage = detailedErrors.map(e => this.errorHandler.formatUserMessage(e)).join('\n');
+                throw new SyntaxError(`Validation errors found:\n${combinedMessage}`);
             }
 
             const parseResult = document.parseResult?.value;
             if (!parseResult) {
-                throw new SyntaxError('Failed to parse document: No parse result available');
+                const error = new SyntaxError('Failed to parse document: No parse result available');
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'parse_result_extraction',
+                    timestamp: new Date()
+                });
+                throw new SyntaxError(this.errorHandler.formatUserMessage(processedError));
             }
 
             return parseResult as MindMap;
         } catch (error) {
-            // Re-throw known error types to preserve their specific handling
-            if (error instanceof SyntaxError || error instanceof FileSystemError) {
+            // Re-throw processed errors to preserve their enhanced information
+            if (error instanceof Error && error.name === 'DetailedError') {
                 throw error;
             }
-            // Wrap unknown errors
-            throw new Error(`Failed to parse CMind file: ${this.formatError(error)}`);
+            
+            // Process and re-throw other errors
+            const processedError = this.errorHandler.processError(error, {
+                filePath,
+                operation: 'file_parsing',
+                timestamp: new Date()
+            });
+            
+            throw new Error(this.errorHandler.formatUserMessage(processedError));
         }
     }
 
@@ -273,14 +350,24 @@ export class ConversionService {
             try {
                 await fs.promises.mkdir(outputDir, { recursive: true });
             } catch (error) {
-                throw new FileSystemError(`Failed to create output directory "${outputDir}": ${this.formatFileSystemError(error)}`);
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'output_directory_creation',
+                    timestamp: new Date()
+                });
+                throw new FileSystemError(this.errorHandler.formatUserMessage(processedError));
             }
 
             // Check if we can write to the output directory
             try {
                 await fs.promises.access(outputDir, fs.constants.W_OK);
             } catch (error) {
-                throw new FileSystemError(`Cannot write to output directory "${outputDir}": ${this.formatFileSystemError(error)}`);
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'output_directory_access',
+                    timestamp: new Date()
+                });
+                throw new FileSystemError(this.errorHandler.formatUserMessage(processedError));
             }
 
             // Generate KityMinder KM content
@@ -304,15 +391,26 @@ export class ConversionService {
                     // Ignore cleanup errors
                 }
                 
-                throw new FileSystemError(`Failed to write output file "${outputPath}": ${this.formatFileSystemError(error)}`);
+                const processedError = this.errorHandler.processError(error, {
+                    filePath,
+                    operation: 'output_file_write',
+                    timestamp: new Date()
+                });
+                throw new FileSystemError(this.errorHandler.formatUserMessage(processedError));
             }
             
         } catch (error) {
-            // Re-throw FileSystemError as-is, wrap others
+            // Re-throw FileSystemError as-is, process others
             if (error instanceof FileSystemError) {
                 throw error;
             }
-            throw new Error(`Failed to generate output file: ${this.formatError(error)}`);
+            
+            const processedError = this.errorHandler.processError(error, {
+                filePath,
+                operation: 'output_generation',
+                timestamp: new Date()
+            });
+            throw new Error(this.errorHandler.formatUserMessage(processedError));
         }
     }
 

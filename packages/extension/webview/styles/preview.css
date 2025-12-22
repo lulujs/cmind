@@ -1,0 +1,276 @@
+/* VSCode Theme Integration */
+:root {
+    --vscode-foreground: var(--vscode-editor-foreground, #cccccc);
+    --vscode-background: var(--vscode-editor-background, #1e1e1e);
+    --vscode-border: var(--vscode-panel-border, #2d2d30);
+    --vscode-button-background: var(--vscode-button-background, #0e639c);
+    --vscode-button-foreground: var(--vscode-button-foreground, #ffffff);
+    --vscode-button-hover: var(--vscode-button-hoverBackground, #1177bb);
+    --vscode-error-foreground: var(--vscode-errorForeground, #f48771);
+    --vscode-warning-foreground: var(--vscode-warningForeground, #ffcc02);
+    --vscode-success-foreground: var(--vscode-terminal-ansiGreen, #16c60c);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--vscode-font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+    font-size: var(--vscode-font-size, 13px);
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-background);
+}
+
+#preview-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* State Containers */
+.state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+}
+
+.state-container.hidden {
+    display: none;
+}
+
+/* Loading State */
+#loading-state {
+    color: var(--vscode-foreground);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--vscode-border);
+    border-top: 3px solid var(--vscode-button-background);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+#error-state {
+    color: var(--vscode-error-foreground);
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.error-details {
+    background-color: var(--vscode-border);
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-family: var(--vscode-editor-font-family, 'Consolas', 'Courier New', monospace);
+    font-size: 0.9rem;
+    text-align: left;
+    white-space: pre-wrap;
+    max-width: 600px;
+    overflow-x: auto;
+}
+
+.retry-button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.retry-button:hover {
+    background-color: var(--vscode-button-hover);
+}
+
+/* Empty State */
+#empty-state {
+    color: var(--vscode-foreground);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.example-hint {
+    background-color: var(--vscode-border);
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 1rem;
+    max-width: 400px;
+}
+
+.example-hint code {
+    font-family: var(--vscode-editor-font-family, 'Consolas', 'Courier New', monospace);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--vscode-success-foreground);
+}
+
+/* KityMinder Container */
+#minder-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#minder-container.hidden {
+    display: none;
+}
+
+#minder-canvas {
+    width: 100%;
+    height: 100%;
+    background-color: var(--vscode-background);
+}
+
+/* Control Panels */
+.controls-panel {
+    position: absolute;
+    background-color: var(--vscode-border);
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+#navigation-controls {
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.control-button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.control-button:hover {
+    background-color: var(--vscode-button-hover);
+}
+
+.control-button:active {
+    transform: scale(0.95);
+}
+
+/* Theme Panel */
+.theme-panel {
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.theme-select {
+    background-color: var(--vscode-background);
+    color: var(--vscode-foreground);
+    border: 1px solid var(--vscode-border);
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.theme-select:focus {
+    outline: 1px solid var(--vscode-button-background);
+    outline-offset: -1px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .controls-panel {
+        padding: 0.25rem;
+    }
+    
+    .control-button {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+    
+    #navigation-controls {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .theme-panel {
+        bottom: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .theme-select {
+        min-width: 100px;
+        font-size: 0.8rem;
+    }
+}
+
+/* KityMinder Overrides for VSCode Integration */
+.km-receiver {
+    background-color: transparent !important;
+}
+
+/* Ensure mind map content is visible in dark themes */
+.km-node text {
+    fill: var(--vscode-foreground) !important;
+}
+
+.km-node rect, .km-node circle, .km-node ellipse {
+    stroke: var(--vscode-foreground) !important;
+}
+
+/* Connection lines visibility */
+.km-connect {
+    stroke: var(--vscode-foreground) !important;
+    opacity: 0.6;
+}
+
+/* Selection indicators */
+.km-node.selected rect, .km-node.selected circle, .km-node.selected ellipse {
+    stroke: var(--vscode-button-background) !important;
+    stroke-width: 2px !important;
+}
+
+/* Hover effects */
+.km-node:hover rect, .km-node:hover circle, .km-node:hover ellipse {
+    stroke: var(--vscode-button-hover) !important;
+    stroke-width: 1.5px !important;
+}

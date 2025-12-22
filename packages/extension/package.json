@@ -27,19 +27,81 @@
             "command": "cmind.convertToKityMinder",
             "title": "Convert to KityMinder KM",
             "category": "CMind"
+        }, {
+            "command": "cmind.openPreview",
+            "title": "Open Preview",
+            "category": "CMind",
+            "icon": "$(open-preview)"
+        }, {
+            "command": "cmind.togglePreviewSync",
+            "title": "Toggle Preview Sync",
+            "category": "CMind",
+            "icon": "$(sync)"
+        }, {
+            "command": "cmind.refreshPreview",
+            "title": "Refresh Preview",
+            "category": "CMind",
+            "icon": "$(refresh)"
         }],
         "menus": {
             "editor/context": [{
                 "command": "cmind.convertToKityMinder",
                 "when": "resourceExtname == .cmind",
                 "group": "1_modification"
+            }, {
+                "command": "cmind.openPreview",
+                "when": "resourceExtname == .cmind",
+                "group": "navigation"
             }],
             "explorer/context": [{
                 "command": "cmind.convertToKityMinder",
                 "when": "resourceExtname == .cmind",
                 "group": "1_modification"
+            }, {
+                "command": "cmind.openPreview",
+                "when": "resourceExtname == .cmind",
+                "group": "navigation"
+            }],
+            "editor/title": [{
+                "command": "cmind.openPreview",
+                "when": "resourceExtname == .cmind",
+                "group": "navigation"
+            }, {
+                "command": "cmind.togglePreviewSync",
+                "when": "cmindPreviewActive",
+                "group": "navigation"
+            }, {
+                "command": "cmind.refreshPreview",
+                "when": "cmindPreviewActive",
+                "group": "navigation"
+            }],
+            "commandPalette": [{
+                "command": "cmind.openPreview",
+                "when": "resourceExtname == .cmind"
+            }, {
+                "command": "cmind.togglePreviewSync",
+                "when": "cmindPreviewActive"
+            }, {
+                "command": "cmind.refreshPreview",
+                "when": "cmindPreviewActive"
             }]
         },
+        "keybindings": [{
+            "command": "cmind.openPreview",
+            "key": "ctrl+shift+v",
+            "mac": "cmd+shift+v",
+            "when": "resourceExtname == .cmind"
+        }, {
+            "command": "cmind.togglePreviewSync",
+            "key": "ctrl+shift+s",
+            "mac": "cmd+shift+s",
+            "when": "cmindPreviewActive"
+        }, {
+            "command": "cmind.refreshPreview",
+            "key": "ctrl+shift+r",
+            "mac": "cmd+shift+r",
+            "when": "cmindPreviewActive"
+        }],
         "configuration": {
             "title": "CMind",
             "properties": {
@@ -57,13 +119,46 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Show notifications for conversion success and errors"
+                },
+                "cmind.preview.autoUpdate": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically update preview when CMind file content changes"
+                },
+                "cmind.preview.updateDelay": {
+                    "type": "number",
+                    "default": 500,
+                    "minimum": 100,
+                    "maximum": 2000,
+                    "description": "Delay in milliseconds before updating preview after content changes"
+                },
+                "cmind.preview.maxMemoryUsage": {
+                    "type": "number",
+                    "default": 50,
+                    "minimum": 10,
+                    "maximum": 200,
+                    "description": "Maximum memory usage in MB for preview cache"
+                },
+                "cmind.preview.enableInteraction": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable interactive features in preview (zoom, pan, navigation)"
+                },
+                "cmind.preview.theme": {
+                    "type": "string",
+                    "default": "default",
+                    "enum": ["default", "fresh-blue", "fresh-green", "fresh-red", "fresh-pink", "fresh-purple"],
+                    "description": "Theme for KityMinder preview rendering"
                 }
             }
         }
     },
     "activationEvents": [
         "onLanguage:cmind",
-        "onCommand:cmind.convertToKityMinder"
+        "onCommand:cmind.convertToKityMinder",
+        "onCommand:cmind.openPreview",
+        "onCommand:cmind.togglePreviewSync",
+        "onCommand:cmind.refreshPreview"
     ],
     "main": "./out/extension/main.cjs",
     "scripts": {

@@ -8,6 +8,13 @@ export interface ExtensionConfig {
     autoConvertOnSave: boolean;
     outputDirectory?: string;
     showNotifications: boolean;
+    preview: {
+        autoUpdate: boolean;
+        updateDelay: number;
+        maxMemoryUsage: number;
+        enableInteraction: boolean;
+        theme: string;
+    };
 }
 
 /**
@@ -96,8 +103,70 @@ export class ConfigurationManager {
         return {
             autoConvertOnSave: this.isAutoConvertEnabled(),
             outputDirectory: this.getOutputDirectory(),
-            showNotifications: this.shouldShowNotifications()
+            showNotifications: this.shouldShowNotifications(),
+            preview: {
+                autoUpdate: this.isPreviewAutoUpdateEnabled(),
+                updateDelay: this.getPreviewUpdateDelay(),
+                maxMemoryUsage: this.getPreviewMaxMemoryUsage(),
+                enableInteraction: this.isPreviewInteractionEnabled(),
+                theme: this.getPreviewTheme()
+            }
         };
+    }
+
+    /**
+     * Checks if preview auto-update is enabled
+     * @returns true if preview auto-update is enabled, false otherwise
+     */
+    isPreviewAutoUpdateEnabled(): boolean {
+        const config = this.getConfiguration();
+        return config.get<boolean>('preview.autoUpdate', true);
+    }
+
+    /**
+     * Gets the preview update delay in milliseconds
+     * @returns The delay in milliseconds before updating preview after content changes
+     */
+    getPreviewUpdateDelay(): number {
+        const config = this.getConfiguration();
+        const delay = config.get<number>('preview.updateDelay', 500);
+        
+        // Ensure delay is within reasonable bounds (100ms to 2000ms)
+        return Math.max(100, Math.min(2000, delay));
+    }
+
+    /**
+     * Gets the maximum memory usage for preview cache in MB
+     * @returns The maximum memory usage in megabytes
+     */
+    getPreviewMaxMemoryUsage(): number {
+        const config = this.getConfiguration();
+        const maxMemory = config.get<number>('preview.maxMemoryUsage', 50);
+        
+        // Ensure memory limit is within reasonable bounds (10MB to 200MB)
+        return Math.max(10, Math.min(200, maxMemory));
+    }
+
+    /**
+     * Checks if preview interaction is enabled
+     * @returns true if interactive features are enabled, false otherwise
+     */
+    isPreviewInteractionEnabled(): boolean {
+        const config = this.getConfiguration();
+        return config.get<boolean>('preview.enableInteraction', true);
+    }
+
+    /**
+     * Gets the preview theme
+     * @returns The theme name for KityMinder preview rendering
+     */
+    getPreviewTheme(): string {
+        const config = this.getConfiguration();
+        const theme = config.get<string>('preview.theme', 'default');
+        
+        // Validate theme is one of the supported themes
+        const supportedThemes = ['default', 'fresh-blue', 'fresh-green', 'fresh-red', 'fresh-pink', 'fresh-purple'];
+        return supportedThemes.includes(theme) ? theme : 'default';
     }
 
     /**

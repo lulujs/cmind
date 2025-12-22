@@ -10,6 +10,11 @@ vi.mock('vscode', () => ({
                 if (key === 'autoConvertOnSave') return true;
                 if (key === 'outputDirectory') return '';
                 if (key === 'showNotifications') return true;
+                if (key === 'preview.autoUpdate') return true;
+                if (key === 'preview.updateDelay') return 500;
+                if (key === 'preview.maxMemoryUsage') return 50;
+                if (key === 'preview.enableInteraction') return true;
+                if (key === 'preview.theme') return 'default';
                 return defaultValue;
             }),
             update: vi.fn()
@@ -67,7 +72,14 @@ describe('ConfigurationManager', () => {
             expect(config).toEqual({
                 autoConvertOnSave: true,
                 outputDirectory: undefined,
-                showNotifications: true
+                showNotifications: true,
+                preview: {
+                    autoUpdate: true,
+                    updateDelay: 500,
+                    maxMemoryUsage: 50,
+                    enableInteraction: true,
+                    theme: 'default'
+                }
             });
         });
     });

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' vscode-resource:; script-src 'unsafe-inline' vscode-resource:; img-src vscode-resource: data:;">
+    <title>CMind Preview</title>
+    
+    <!-- KityMinder Core CSS -->
+    <link rel="stylesheet" href="./assets/kityminder.core.css">
+    
+    <!-- Custom VSCode Integration CSS -->
+    <link rel="stylesheet" href="./styles/preview.css">
+</head>
+<body>
+    <div id="preview-container">
+        <!-- Loading State -->
+        <div id="loading-state" class="state-container">
+            <div class="loading-spinner"></div>
+            <p>Loading preview...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div id="error-state" class="state-container hidden">
+            <div class="error-icon">⚠️</div>
+            <h3>Preview Error</h3>
+            <p id="error-message">An error occurred while generating the preview.</p>
+            <div id="error-details" class="error-details hidden"></div>
+            <button id="retry-button" class="retry-button">Retry</button>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="empty-state" class="state-container hidden">
+            <div class="empty-icon">📝</div>
+            <h3>Empty CMind File</h3>
+            <p>Start typing in your CMind file to see the preview here.</p>
+            <div class="example-hint">
+                <p>Example:</p>
+                <code># Root Topic<br>  - Child 1<br>  - Child 2</code>
+            </div>
+        </div>
+        
+        <!-- KityMinder Container -->
+        <div id="minder-container" class="hidden">
+            <div id="minder-canvas"></div>
+            
+            <!-- Navigation Controls -->
+            <div id="navigation-controls" class="controls-panel">
+                <button id="zoom-in" class="control-button" title="Zoom In">+</button>
+                <button id="zoom-out" class="control-button" title="Zoom Out">-</button>
+                <button id="zoom-fit" class="control-button" title="Fit to Screen">⌂</button>
+                <button id="center-view" class="control-button" title="Center View">⊙</button>
+            </div>
+            
+            <!-- Theme Selector -->
+            <div id="theme-selector" class="controls-panel theme-panel">
+                <select id="theme-select" class="theme-select">
+                    <option value="default">Default</option>
+                    <option value="fresh-blue">Fresh Blue</option>
+                    <option value="fresh-green">Fresh Green</option>
+                    <option value="fresh-red">Fresh Red</option>
+                    <option value="fresh-pink">Fresh Pink</option>
+                    <option value="fresh-purple">Fresh Purple</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- KityMinder Core Scripts -->
+    <script src="./assets/kity.js"></script>
+    <script src="./assets/kityminder.core.js"></script>
+    
+    <!-- Preview Integration Script -->
+    <script src="./scripts/preview.js"></script>
+</body>
+</html>
