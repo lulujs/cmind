@@ -341,7 +341,21 @@ export class WebUIIntegrationService {
                 const treeHeight = calculateTreeHeight(data.root);
                 const adjustedStartY = startY;
                 
-                renderNode(svg, data.root, startX, adjustedStartY, 0, currentThemeColors, { yOffset: 0 });
+                // 用于追踪 SVG 边界
+                var bounds = { minX: startX, maxX: startX, minY: adjustedStartY, maxY: adjustedStartY };
+                
+                renderNode(svg, data.root, startX, adjustedStartY, 0, currentThemeColors, bounds);
+                
+                // 设置 viewBox 以确保所有内容可见
+                var padding = 50;
+                var viewBoxWidth = bounds.maxX - bounds.minX + padding * 2;
+                var viewBoxHeight = bounds.maxY - bounds.minY + padding * 2;
+                var viewBoxX = bounds.minX - padding;
+                var viewBoxY = bounds.minY - padding;
+                
+                svg.setAttribute('viewBox', viewBoxX + ' ' + viewBoxY + ' ' + viewBoxWidth + ' ' + viewBoxHeight);
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                
                 elements.minderCanvas.appendChild(svg);
                 
                 currentMinder = {
@@ -362,11 +376,26 @@ export class WebUIIntegrationService {
                     },
                     updateTransform: function() {
                         if (this.svg) {
-                            const transform = 'translate(' + this.panX + ',' + this.panY + ') scale(' + this.zoomLevel + ')';
-                            this.svg.setAttribute('transform', transform);
+                            var currentViewBox = this.svg.getAttribute('viewBox').split(' ');
+                            var baseX = parseFloat(currentViewBox[0]);
+                            var baseY = parseFloat(currentViewBox[1]);
+                            var baseWidth = parseFloat(currentViewBox[2]);
+                            var baseHeight = parseFloat(currentViewBox[3]);
+                            
+                            var newWidth = baseWidth / this.zoomLevel;
+                            var newHeight = baseHeight / this.zoomLevel;
+                            var newX = baseX + this.panX;
+                            var newY = baseY + this.panY;
+                            
+                            this.svg.setAttribute('viewBox', newX + ' ' + newY + ' ' + newWidth + ' ' + newHeight);
                         }
                     },
-                    fitView: function() { this.zoomLevel = 1; this.panX = 0; this.panY = 0; this.updateTransform(); }
+                    fitView: function() { 
+                        this.zoomLevel = 1; 
+                        this.panX = 0; 
+                        this.panY = 0; 
+                        renderSimpleMindMap(this.data, this.theme);
+                    }
                 };
             }
             
@@ -379,19 +408,43 @@ export class WebUIIntegrationService {
                 return totalHeight;
             }
             
-            function renderNode(svg, node, x, y, level, colors, state) {
+            function measureTextWidth(text, fontSize) {
+                // 更精确的文本宽度计算
+                // 中文字符约为 fontSize * 1.0，英文字符约为 fontSize * 0.6
+                var chineseCount = 0;
+                var otherCount = 0;
+                for (var i = 0; i < text.length; i++) {
+                    var code = text.charCodeAt(i);
+                    if (code >= 0x4E00 && code <= 0x9FFF) {
+                        chineseCount++;
+                    } else {
+                        otherCount++;
+                    }
+                }
+                return chineseCount * fontSize * 1.0 + otherCount * fontSize * 0.6;
+            }
+            
+            function renderNode(svg, node, x, y, level, colors, bounds) {
                 const nodeData = node.data || {};
                 const text = nodeData.text || 'Node';
                 const children = node.children || [];
                 
                 const fontSize = level === 0 ? 16 : 14;
                 const padding = level === 0 ? 16 : 10;
-                const textWidth = text.length * fontSize * 0.6;
+                
+                // 使用更精确的文本宽度计算
+                const textWidth = measureTextWidth(text, fontSize);
                 const nodeWidth = Math.max(textWidth + padding * 2, level === 0 ? 160 : 100);
                 const nodeHeight = level === 0 ? 50 : 36;
                 
                 const horizontalSpacing = 180;
                 const verticalSpacing = 60;
+                
+                // 更新边界
+                bounds.minX = Math.min(bounds.minX, x);
+                bounds.maxX = Math.max(bounds.maxX, x + nodeWidth);
+                bounds.minY = Math.min(bounds.minY, y - nodeHeight / 2);
+                bounds.maxY = Math.max(bounds.maxY, y + nodeHeight / 2);
                 
                 // 绘制节点
                 const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -488,7 +541,7 @@ export class WebUIIntegrationService {
                         svg.appendChild(line3);
                         
                         // 递归渲染子节点
-                        renderNode(svg, children[i], childX, childY, level + 1, colors, state);
+                        renderNode(svg, children[i], childX, childY, level + 1, colors, bounds);
                         
                         currentY += childHeights[i];
                     }
