@@ -1,37 +1,42 @@
-import * as vscode from 'vscode';
-import { KityMinderData } from './memory-cache-service.js';
+import * as vscode from "vscode";
+import { KityMinderData } from "./memory-cache-service.js";
 
 /**
  * Service for integrating KityMinder WebUI components with VSCode webviews
  * Handles webview content creation, message communication, and theme management
  */
 export class WebUIIntegrationService {
-    private readonly webviews: Map<string, vscode.Webview> = new Map();
-    private currentTheme: string = 'default';
-    private interactionEnabled: boolean = true;
+  private readonly webviews: Map<string, vscode.Webview> = new Map();
+  private currentTheme: string = "default";
+  private interactionEnabled: boolean = true;
 
-    constructor(context: vscode.ExtensionContext) {
-        // Context not needed for inline HTML approach
+  constructor(context: vscode.ExtensionContext) {
+    // Context not needed for inline HTML approach
+  }
+
+  /**
+   * Creates webview content with embedded KityMinder WebUI
+   * @param data KityMinder JSON data to display
+   * @param filePath Path to the CMind file
+   * @param webview The webview instance
+   * @param theme Theme to apply
+   * @returns HTML content for the webview
+   */
+  createWebviewContent(
+    data?: KityMinderData,
+    filePath?: string,
+    webview?: vscode.Webview,
+    theme?: string,
+  ): string {
+    const currentTheme = theme || this.currentTheme;
+
+    // Register webview if provided
+    if (filePath && webview) {
+      this.webviews.set(filePath, webview);
     }
 
-    /**
-     * Creates webview content with embedded KityMinder WebUI
-     * @param data KityMinder JSON data to display
-     * @param filePath Path to the CMind file
-     * @param webview The webview instance
-     * @param theme Theme to apply
-     * @returns HTML content for the webview
-     */
-    createWebviewContent(data?: KityMinderData, filePath?: string, webview?: vscode.Webview, theme?: string): string {
-        const currentTheme = theme || this.currentTheme;
-        
-        // Register webview if provided
-        if (filePath && webview) {
-            this.webviews.set(filePath, webview);
-        }
-        
-        // Create the HTML content with inline styles and scripts
-        const html = `<!DOCTYPE html>
+    // Create the HTML content with inline styles and scripts
+    const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -147,7 +152,7 @@ export class WebUIIntegrationService {
             <div id="minder-canvas"></div>
             
             <!-- Navigation Controls -->
-            <div id="navigation-controls" class="controls-panel" style="display: ${this.interactionEnabled ? 'flex' : 'none'}">
+            <div id="navigation-controls" class="controls-panel" style="display: ${this.interactionEnabled ? "flex" : "none"}">
                 <button id="zoom-in" class="control-button" title="Zoom In">+</button>
                 <button id="zoom-out" class="control-button" title="Zoom Out">-</button>
                 <button id="zoom-fit" class="control-button" title="Fit to Screen">⌂</button>
@@ -155,14 +160,14 @@ export class WebUIIntegrationService {
             </div>
             
             <!-- Theme Selector -->
-            <div id="theme-selector" class="controls-panel theme-panel" style="display: ${this.interactionEnabled ? 'block' : 'none'}">
+            <div id="theme-selector" class="controls-panel theme-panel" style="display: ${this.interactionEnabled ? "block" : "none"}">
                 <select id="theme-select" class="theme-select">
-                    <option value="default" ${currentTheme === 'default' ? 'selected' : ''}>Default</option>
-                    <option value="fresh-blue" ${currentTheme === 'fresh-blue' ? 'selected' : ''}>Fresh Blue</option>
-                    <option value="fresh-green" ${currentTheme === 'fresh-green' ? 'selected' : ''}>Fresh Green</option>
-                    <option value="fresh-red" ${currentTheme === 'fresh-red' ? 'selected' : ''}>Fresh Red</option>
-                    <option value="fresh-pink" ${currentTheme === 'fresh-pink' ? 'selected' : ''}>Fresh Pink</option>
-                    <option value="fresh-purple" ${currentTheme === 'fresh-purple' ? 'selected' : ''}>Fresh Purple</option>
+                    <option value="default" ${currentTheme === "default" ? "selected" : ""}>Default</option>
+                    <option value="fresh-blue" ${currentTheme === "fresh-blue" ? "selected" : ""}>Fresh Blue</option>
+                    <option value="fresh-green" ${currentTheme === "fresh-green" ? "selected" : ""}>Fresh Green</option>
+                    <option value="fresh-red" ${currentTheme === "fresh-red" ? "selected" : ""}>Fresh Red</option>
+                    <option value="fresh-pink" ${currentTheme === "fresh-pink" ? "selected" : ""}>Fresh Pink</option>
+                    <option value="fresh-purple" ${currentTheme === "fresh-purple" ? "selected" : ""}>Fresh Purple</option>
                 </select>
             </div>
         </div>
@@ -317,22 +322,26 @@ export class WebUIIntegrationService {
                 svg.style.display = 'block';
                 
                 const themes = {
-                    'default': { bg: '#ffffff', root: '#4285f4', node: '#34a853', text: '#333', line: '#ccc' },
-                    'fresh-blue': { bg: '#f8f9fa', root: '#1976d2', node: '#42a5f5', text: '#1565c0', line: '#90caf9' },
-                    'fresh-green': { bg: '#f1f8e9', root: '#388e3c', node: '#66bb6a', text: '#2e7d32', line: '#a5d6a7' },
-                    'fresh-red': { bg: '#ffebee', root: '#d32f2f', node: '#ef5350', text: '#c62828', line: '#ffcdd2' },
-                    'fresh-pink': { bg: '#fce4ec', root: '#c2185b', node: '#ec407a', text: '#ad1457', line: '#f8bbd9' },
-                    'fresh-purple': { bg: '#f3e5f5', root: '#7b1fa2', node: '#ab47bc', text: '#6a1b9a', line: '#ce93d8' }
+                    'default': { bg: '#f5f5f5', root: '#5b9bd5', node: '#70ad47', text: '#333', line: '#5b9bd5', rootText: '#fff', nodeText: '#333' },
+                    'fresh-blue': { bg: '#f8f9fa', root: '#1976d2', node: '#42a5f5', text: '#1565c0', line: '#90caf9', rootText: '#fff', nodeText: '#333' },
+                    'fresh-green': { bg: '#f1f8e9', root: '#388e3c', node: '#66bb6a', text: '#2e7d32', line: '#a5d6a7', rootText: '#fff', nodeText: '#333' },
+                    'fresh-red': { bg: '#ffebee', root: '#d32f2f', node: '#ef5350', text: '#c62828', line: '#ffcdd2', rootText: '#fff', nodeText: '#333' },
+                    'fresh-pink': { bg: '#fce4ec', root: '#c2185b', node: '#ec407a', text: '#ad1457', line: '#f8bbd9', rootText: '#fff', nodeText: '#333' },
+                    'fresh-purple': { bg: '#f3e5f5', root: '#7b1fa2', node: '#ab47bc', text: '#6a1b9a', line: '#ce93d8', rootText: '#fff', nodeText: '#333' }
                 };
                 
                 const currentThemeColors = themes[theme] || themes['default'];
                 svg.style.background = currentThemeColors.bg;
                 
                 const rect = elements.minderCanvas.getBoundingClientRect();
-                const centerX = rect.width / 2 || 400;
-                const centerY = rect.height / 2 || 300;
+                const startX = 100;
+                const startY = rect.height / 2 || 300;
                 
-                renderNode(svg, data.root, centerX, centerY, 0, 0, currentThemeColors);
+                // 计算树的总高度以便垂直居中
+                const treeHeight = calculateTreeHeight(data.root);
+                const adjustedStartY = startY;
+                
+                renderNode(svg, data.root, startX, adjustedStartY, 0, currentThemeColors, { yOffset: 0 });
                 elements.minderCanvas.appendChild(svg);
                 
                 currentMinder = {
@@ -361,36 +370,56 @@ export class WebUIIntegrationService {
                 };
             }
             
-            function renderNode(svg, node, x, y, level, angle, colors) {
+            function calculateTreeHeight(node) {
+                if (!node.children || node.children.length === 0) return 60;
+                var totalHeight = 0;
+                for (var i = 0; i < node.children.length; i++) {
+                    totalHeight += calculateTreeHeight(node.children[i]);
+                }
+                return totalHeight;
+            }
+            
+            function renderNode(svg, node, x, y, level, colors, state) {
                 const nodeData = node.data || {};
                 const text = nodeData.text || 'Node';
                 const children = node.children || [];
                 
-                const fontSize = level === 0 ? 18 : 14;
-                const padding = level === 0 ? 20 : 12;
+                const fontSize = level === 0 ? 16 : 14;
+                const padding = level === 0 ? 16 : 10;
                 const textWidth = text.length * fontSize * 0.6;
-                const nodeWidth = Math.max(textWidth + padding * 2, 80);
-                const nodeHeight = fontSize + padding;
+                const nodeWidth = Math.max(textWidth + padding * 2, level === 0 ? 160 : 100);
+                const nodeHeight = level === 0 ? 50 : 36;
                 
+                const horizontalSpacing = 180;
+                const verticalSpacing = 60;
+                
+                // 绘制节点
                 const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', x - nodeWidth / 2);
+                rect.setAttribute('x', x);
                 rect.setAttribute('y', y - nodeHeight / 2);
                 rect.setAttribute('width', nodeWidth);
                 rect.setAttribute('height', nodeHeight);
-                rect.setAttribute('rx', 8);
-                rect.setAttribute('fill', level === 0 ? colors.root : colors.node);
-                rect.setAttribute('stroke', colors.line);
-                rect.setAttribute('stroke-width', 2);
+                rect.setAttribute('rx', level === 0 ? 8 : 4);
+                
+                if (level === 0) {
+                    rect.setAttribute('fill', colors.root);
+                    rect.setAttribute('stroke', colors.root);
+                    rect.setAttribute('stroke-width', 2);
+                } else {
+                    rect.setAttribute('fill', 'transparent');
+                    rect.setAttribute('stroke', colors.line);
+                    rect.setAttribute('stroke-width', 1.5);
+                }
                 
                 const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                textElement.setAttribute('x', x);
+                textElement.setAttribute('x', x + nodeWidth / 2);
                 textElement.setAttribute('y', y + fontSize / 3);
                 textElement.setAttribute('text-anchor', 'middle');
                 textElement.setAttribute('font-family', 'Arial, sans-serif');
                 textElement.setAttribute('font-size', fontSize);
-                textElement.setAttribute('fill', '#ffffff');
+                textElement.setAttribute('fill', level === 0 ? colors.rootText : colors.nodeText);
                 textElement.setAttribute('font-weight', level === 0 ? 'bold' : 'normal');
                 textElement.textContent = text;
                 
@@ -398,28 +427,63 @@ export class WebUIIntegrationService {
                 nodeGroup.appendChild(textElement);
                 svg.appendChild(nodeGroup);
                 
+                // 绘制子节点
                 if (children.length > 0) {
-                    const angleStep = children.length > 1 ? (Math.PI * 2) / children.length : 0;
-                    const radius = level === 0 ? 150 : 100;
+                    const nodeRightX = x + nodeWidth;
+                    const childX = nodeRightX + horizontalSpacing;
                     
-                    for (let i = 0; i < children.length; i++) {
-                        const childAngle = level === 0 ? 
-                            (i * angleStep - Math.PI / 2) : 
-                            (angle + (i - children.length / 2) * 0.5);
+                    // 计算子树总高度
+                    var childHeights = [];
+                    var totalHeight = 0;
+                    for (var i = 0; i < children.length; i++) {
+                        var height = calculateTreeHeight(children[i]);
+                        childHeights.push(height);
+                        totalHeight += height;
+                    }
+                    
+                    // 起始Y坐标
+                    var currentY = y - totalHeight / 2;
+                    
+                    for (var i = 0; i < children.length; i++) {
+                        var childY = currentY + childHeights[i] / 2;
                         
-                        const childX = x + Math.cos(childAngle) * radius;
-                        const childY = y + Math.sin(childAngle) * radius;
+                        // 绘制连接线 - 使用折线
+                        var midX = nodeRightX + horizontalSpacing / 2;
                         
-                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                        line.setAttribute('x1', x);
-                        line.setAttribute('y1', y);
-                        line.setAttribute('x2', childX);
-                        line.setAttribute('y2', childY);
-                        line.setAttribute('stroke', colors.line);
-                        line.setAttribute('stroke-width', 2);
-                        svg.appendChild(line);
+                        // 主干线（从父节点右侧到中点）
+                        var line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line1.setAttribute('x1', nodeRightX);
+                        line1.setAttribute('y1', y);
+                        line1.setAttribute('x2', midX);
+                        line1.setAttribute('y2', y);
+                        line1.setAttribute('stroke', colors.line);
+                        line1.setAttribute('stroke-width', 1.5);
+                        svg.appendChild(line1);
                         
-                        renderNode(svg, children[i], childX, childY, level + 1, childAngle, colors);
+                        // 垂直线（从中点到子节点高度）
+                        var line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line2.setAttribute('x1', midX);
+                        line2.setAttribute('y1', y);
+                        line2.setAttribute('x2', midX);
+                        line2.setAttribute('y2', childY);
+                        line2.setAttribute('stroke', colors.line);
+                        line2.setAttribute('stroke-width', 1.5);
+                        svg.appendChild(line2);
+                        
+                        // 水平线（从中点到子节点）
+                        var line3 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line3.setAttribute('x1', midX);
+                        line3.setAttribute('y1', childY);
+                        line3.setAttribute('x2', childX);
+                        line3.setAttribute('y2', childY);
+                        line3.setAttribute('stroke', colors.line);
+                        line3.setAttribute('stroke-width', 1.5);
+                        svg.appendChild(line3);
+                        
+                        // 递归渲染子节点
+                        renderNode(svg, children[i], childX, childY, level + 1, colors, state);
+                        
+                        currentY += childHeights[i];
                     }
                 }
             }
@@ -542,7 +606,9 @@ export class WebUIIntegrationService {
         })();
     </script>
     
-    ${data ? `<script>
+    ${
+      data
+        ? `<script>
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 window.postMessage({
@@ -552,309 +618,330 @@ export class WebUIIntegrationService {
                 }, '*');
             }, 100);
         });
-    </script>` : ''}
+    </script>`
+        : ""
+    }
 </body>
 </html>`;
 
-        return html;
+    return html;
+  }
+
+  /**
+   * Handles messages received from webview
+   * @param message The message data
+   * @param filePath The file path associated with the webview
+   */
+  async handleWebviewMessage(message: any, filePath: string): Promise<void> {
+    try {
+      switch (message.type) {
+        case "ready":
+          console.log(
+            "Webview ready for",
+            filePath,
+            "timestamp:",
+            message.timestamp,
+          );
+          break;
+
+        case "themeChanged":
+          await this.handleThemeChange(message.theme);
+          break;
+
+        case "retry":
+          await this.handleRetryRequest(filePath, message.attempt);
+          break;
+
+        case "contentUpdated":
+          await this.handleContentUpdateResult(message);
+          break;
+
+        case "error":
+          await this.handleWebviewError(message);
+          break;
+
+        default:
+          console.warn("Unknown webview message type:", message.type);
+      }
+    } catch (error) {
+      console.error("Error handling webview message:", error);
+      await this.sendErrorToWebview(
+        filePath,
+        "Message Handler Error",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
+  }
 
-    /**
-     * Handles messages received from webview
-     * @param message The message data
-     * @param filePath The file path associated with the webview
-     */
-    async handleWebviewMessage(message: any, filePath: string): Promise<void> {
-        try {
-            switch (message.type) {
-                case 'ready':
-                    console.log('Webview ready for', filePath, 'timestamp:', message.timestamp);
-                    break;
+  /**
+   * Updates the theme for all active webviews
+   * @param theme New theme to apply
+   */
+  updateTheme(theme: string): void {
+    this.currentTheme = theme;
 
-                case 'themeChanged':
-                    await this.handleThemeChange(message.theme);
-                    break;
-
-                case 'retry':
-                    await this.handleRetryRequest(filePath, message.attempt);
-                    break;
-
-                case 'contentUpdated':
-                    await this.handleContentUpdateResult(message);
-                    break;
-
-                case 'error':
-                    await this.handleWebviewError(message);
-                    break;
-
-                default:
-                    console.warn('Unknown webview message type:', message.type);
-            }
-        } catch (error) {
-            console.error('Error handling webview message:', error);
-            await this.sendErrorToWebview(filePath, 'Message Handler Error', error instanceof Error ? error.message : 'Unknown error');
-        }
-    }
-
-    /**
-     * Updates the theme for all active webviews
-     * @param theme New theme to apply
-     */
-    updateTheme(theme: string): void {
-        this.currentTheme = theme;
-        
-        // Update all active webviews
-        for (const [filePath, webview] of this.webviews) {
-            try {
-                webview.postMessage({
-                    type: 'updateTheme',
-                    theme: theme
-                });
-            } catch (error) {
-                console.error(`Failed to update theme for ${filePath}:`, error);
-            }
-        }
-    }
-
-    /**
-     * Enables or disables interactive features in webviews
-     * @param enabled Whether interaction should be enabled
-     */
-    enableInteraction(enabled: boolean): void {
-        this.interactionEnabled = enabled;
-        
-        // Update all active webviews
-        for (const [filePath, webview] of this.webviews) {
-            try {
-                webview.postMessage({
-                    type: 'enableInteraction',
-                    enabled: enabled
-                });
-            } catch (error) {
-                console.error(`Failed to update interaction for ${filePath}:`, error);
-            }
-        }
-    }
-
-    /**
-     * Sends content update to a specific webview
-     * @param filePath The file path associated with the webview
-     * @param data KityMinder JSON data
-     * @param theme Optional theme to apply
-     */
-    async sendContentUpdate(filePath: string, data: KityMinderData, theme?: string): Promise<void> {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            throw new Error(`Webview not found for file: ${filePath}`);
-        }
-
-        try {
-            await webview.postMessage({
-                type: 'updateContent',
-                data: data,
-                theme: theme || this.currentTheme
-            });
-        } catch (error) {
-            console.error('Failed to send content update to webview:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Sends error message to webview
-     * @param filePath The file path associated with the webview
-     * @param title Error title
-     * @param message Error message
-     * @param details Optional error details
-     */
-    async sendErrorToWebview(filePath: string, title: string, message: string, details?: string): Promise<void> {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            await webview.postMessage({
-                type: 'showError',
-                title: title,
-                message: message,
-                details: details
-            });
-        } catch (error) {
-            console.error('Failed to send error to webview:', error);
-        }
-    }
-
-    /**
-     * Sends empty state message to webview
-     * @param filePath The file path associated with the webview
-     */
-    async sendEmptyState(filePath: string): Promise<void> {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            await webview.postMessage({
-                type: 'showEmpty'
-            });
-        } catch (error) {
-            console.error('Failed to send empty state to webview:', error);
-        }
-    }
-
-    /**
-     * Sends loading state message to webview
-     * @param filePath The file path associated with the webview
-     */
-    async sendLoadingState(filePath: string): Promise<void> {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            await webview.postMessage({
-                type: 'showLoading'
-            });
-        } catch (error) {
-            console.error('Failed to send loading state to webview:', error);
-        }
-    }
-
-    /**
-     * Sets zoom level for a specific webview
-     * @param filePath The file path associated with the webview
-     * @param zoomLevel Zoom level (1.0 = 100%)
-     */
-    setZoomLevel(filePath: string, zoomLevel: number): void {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            webview.postMessage({
-                type: 'setZoom',
-                zoomLevel: zoomLevel
-            });
-        } catch (error) {
-            console.error(`Failed to set zoom level for ${filePath}:`, error);
-        }
-    }
-
-    /**
-     * Fits the mind map to view for a specific webview
-     * @param filePath The file path associated with the webview
-     */
-    fitToView(filePath: string): void {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            webview.postMessage({
-                type: 'fitToView'
-            });
-        } catch (error) {
-            console.error(`Failed to fit to view for ${filePath}:`, error);
-        }
-    }
-
-    /**
-     * Centers the view for a specific webview
-     * @param filePath The file path associated with the webview
-     */
-    centerView(filePath: string): void {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            webview.postMessage({
-                type: 'centerView'
-            });
-        } catch (error) {
-            console.error(`Failed to center view for ${filePath}:`, error);
-        }
-    }
-
-    /**
-     * Resets the view for a specific webview
-     * @param filePath The file path associated with the webview
-     */
-    resetView(filePath: string): void {
-        const webview = this.webviews.get(filePath);
-        if (!webview) {
-            return;
-        }
-
-        try {
-            webview.postMessage({
-                type: 'resetView'
-            });
-        } catch (error) {
-            console.error(`Failed to reset view for ${filePath}:`, error);
-        }
-    }
-
-    /**
-     * Removes a webview from management
-     * @param filePath The file path associated with the webview
-     */
-    removeWebview(filePath: string): void {
-        this.webviews.delete(filePath);
-    }
-
-    /**
-     * Disposes all resources
-     */
-    dispose(): void {
-        // Clear all webview references
-        this.webviews.clear();
-    }
-
-
-
-    private async handleThemeChange(theme: string): Promise<void> {
-        this.currentTheme = theme;
-        
-        // Update configuration
-        const config = vscode.workspace.getConfiguration('cmind.preview');
-        await config.update('theme', theme, vscode.ConfigurationTarget.Global);
-        
-        console.log('Theme changed to:', theme);
-    }
-
-    private async handleRetryRequest(filePath: string, attempt: number): Promise<void> {
-        console.log(`Retry request received for ${filePath}, attempt: ${attempt}`);
-        
-        // Send loading state while retrying
-        await this.sendLoadingState(filePath);
-        
-        // Emit retry event that can be handled by the preview coordinator
-        // This would typically trigger a content refresh
-    }
-
-    private async handleContentUpdateResult(message: any): Promise<void> {
-        if (message.success) {
-            console.log('Content update successful at:', new Date(message.timestamp));
-        } else {
-            console.error('Content update failed:', message.error);
-        }
-    }
-
-    private async handleWebviewError(message: any): Promise<void> {
-        console.error('Webview error:', {
-            title: message.title,
-            message: message.message,
-            details: message.details,
-            timestamp: new Date(message.timestamp)
+    // Update all active webviews
+    for (const [filePath, webview] of this.webviews) {
+      try {
+        webview.postMessage({
+          type: "updateTheme",
+          theme: theme,
         });
-        
-        // Could emit error events for logging or user notification
+      } catch (error) {
+        console.error(`Failed to update theme for ${filePath}:`, error);
+      }
     }
+  }
+
+  /**
+   * Enables or disables interactive features in webviews
+   * @param enabled Whether interaction should be enabled
+   */
+  enableInteraction(enabled: boolean): void {
+    this.interactionEnabled = enabled;
+
+    // Update all active webviews
+    for (const [filePath, webview] of this.webviews) {
+      try {
+        webview.postMessage({
+          type: "enableInteraction",
+          enabled: enabled,
+        });
+      } catch (error) {
+        console.error(`Failed to update interaction for ${filePath}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Sends content update to a specific webview
+   * @param filePath The file path associated with the webview
+   * @param data KityMinder JSON data
+   * @param theme Optional theme to apply
+   */
+  async sendContentUpdate(
+    filePath: string,
+    data: KityMinderData,
+    theme?: string,
+  ): Promise<void> {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      throw new Error(`Webview not found for file: ${filePath}`);
+    }
+
+    try {
+      await webview.postMessage({
+        type: "updateContent",
+        data: data,
+        theme: theme || this.currentTheme,
+      });
+    } catch (error) {
+      console.error("Failed to send content update to webview:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Sends error message to webview
+   * @param filePath The file path associated with the webview
+   * @param title Error title
+   * @param message Error message
+   * @param details Optional error details
+   */
+  async sendErrorToWebview(
+    filePath: string,
+    title: string,
+    message: string,
+    details?: string,
+  ): Promise<void> {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      await webview.postMessage({
+        type: "showError",
+        title: title,
+        message: message,
+        details: details,
+      });
+    } catch (error) {
+      console.error("Failed to send error to webview:", error);
+    }
+  }
+
+  /**
+   * Sends empty state message to webview
+   * @param filePath The file path associated with the webview
+   */
+  async sendEmptyState(filePath: string): Promise<void> {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      await webview.postMessage({
+        type: "showEmpty",
+      });
+    } catch (error) {
+      console.error("Failed to send empty state to webview:", error);
+    }
+  }
+
+  /**
+   * Sends loading state message to webview
+   * @param filePath The file path associated with the webview
+   */
+  async sendLoadingState(filePath: string): Promise<void> {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      await webview.postMessage({
+        type: "showLoading",
+      });
+    } catch (error) {
+      console.error("Failed to send loading state to webview:", error);
+    }
+  }
+
+  /**
+   * Sets zoom level for a specific webview
+   * @param filePath The file path associated with the webview
+   * @param zoomLevel Zoom level (1.0 = 100%)
+   */
+  setZoomLevel(filePath: string, zoomLevel: number): void {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      webview.postMessage({
+        type: "setZoom",
+        zoomLevel: zoomLevel,
+      });
+    } catch (error) {
+      console.error(`Failed to set zoom level for ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Fits the mind map to view for a specific webview
+   * @param filePath The file path associated with the webview
+   */
+  fitToView(filePath: string): void {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      webview.postMessage({
+        type: "fitToView",
+      });
+    } catch (error) {
+      console.error(`Failed to fit to view for ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Centers the view for a specific webview
+   * @param filePath The file path associated with the webview
+   */
+  centerView(filePath: string): void {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      webview.postMessage({
+        type: "centerView",
+      });
+    } catch (error) {
+      console.error(`Failed to center view for ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Resets the view for a specific webview
+   * @param filePath The file path associated with the webview
+   */
+  resetView(filePath: string): void {
+    const webview = this.webviews.get(filePath);
+    if (!webview) {
+      return;
+    }
+
+    try {
+      webview.postMessage({
+        type: "resetView",
+      });
+    } catch (error) {
+      console.error(`Failed to reset view for ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Removes a webview from management
+   * @param filePath The file path associated with the webview
+   */
+  removeWebview(filePath: string): void {
+    this.webviews.delete(filePath);
+  }
+
+  /**
+   * Disposes all resources
+   */
+  dispose(): void {
+    // Clear all webview references
+    this.webviews.clear();
+  }
+
+  private async handleThemeChange(theme: string): Promise<void> {
+    this.currentTheme = theme;
+
+    // Update configuration
+    const config = vscode.workspace.getConfiguration("cmind.preview");
+    await config.update("theme", theme, vscode.ConfigurationTarget.Global);
+
+    console.log("Theme changed to:", theme);
+  }
+
+  private async handleRetryRequest(
+    filePath: string,
+    attempt: number,
+  ): Promise<void> {
+    console.log(`Retry request received for ${filePath}, attempt: ${attempt}`);
+
+    // Send loading state while retrying
+    await this.sendLoadingState(filePath);
+
+    // Emit retry event that can be handled by the preview coordinator
+    // This would typically trigger a content refresh
+  }
+
+  private async handleContentUpdateResult(message: any): Promise<void> {
+    if (message.success) {
+      console.log("Content update successful at:", new Date(message.timestamp));
+    } else {
+      console.error("Content update failed:", message.error);
+    }
+  }
+
+  private async handleWebviewError(message: any): Promise<void> {
+    console.error("Webview error:", {
+      title: message.title,
+      message: message.message,
+      details: message.details,
+      timestamp: new Date(message.timestamp),
+    });
+
+    // Could emit error events for logging or user notification
+  }
 }
