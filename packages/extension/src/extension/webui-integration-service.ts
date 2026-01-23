@@ -404,10 +404,17 @@ export class WebUIIntegrationService {
                 rect.setAttribute('rx', level === 0 ? 8 : 4);
                 
                 if (level === 0) {
-                    rect.setAttribute('fill', colors.root);
-                    rect.setAttribute('stroke', colors.root);
+                    // 根节点：rgb(220,230,242)
+                    rect.setAttribute('fill', 'rgb(220, 230, 242)');
+                    rect.setAttribute('stroke', colors.line);
                     rect.setAttribute('stroke-width', 2);
+                } else if (level === 1) {
+                    // 二级节点：rgb(238,239,243)
+                    rect.setAttribute('fill', 'rgb(238, 239, 243)');
+                    rect.setAttribute('stroke', colors.line);
+                    rect.setAttribute('stroke-width', 1.5);
                 } else {
+                    // 其他层级：无底色
                     rect.setAttribute('fill', 'transparent');
                     rect.setAttribute('stroke', colors.line);
                     rect.setAttribute('stroke-width', 1.5);
@@ -419,7 +426,7 @@ export class WebUIIntegrationService {
                 textElement.setAttribute('text-anchor', 'middle');
                 textElement.setAttribute('font-family', 'Arial, sans-serif');
                 textElement.setAttribute('font-size', fontSize);
-                textElement.setAttribute('fill', level === 0 ? colors.rootText : colors.nodeText);
+                textElement.setAttribute('fill', colors.nodeText);
                 textElement.setAttribute('font-weight', level === 0 ? 'bold' : 'normal');
                 textElement.textContent = text;
                 
