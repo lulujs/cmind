@@ -560,6 +560,7 @@
           let currentPanX = 0;
           let currentPanY = 0;
 
+          // 在 SVG 上监听 mousedown 开始拖动
           svg.addEventListener("mousedown", function (e) {
             if (!isInteractionEnabled) return;
             isDragging = true;
@@ -569,7 +570,8 @@
             e.preventDefault();
           });
 
-          svg.addEventListener("mousemove", function (e) {
+          // 在 document 级别监听 mousemove，避免 SVG 内部元素干扰
+          document.addEventListener("mousemove", function (e) {
             if (!isDragging || !isInteractionEnabled) return;
 
             const dx = e.clientX - dragStartX;
@@ -589,14 +591,12 @@
             e.preventDefault();
           });
 
-          svg.addEventListener("mouseup", function (e) {
-            isDragging = false;
-            svg.style.cursor = "grab";
-          });
-
-          svg.addEventListener("mouseleave", function (e) {
-            isDragging = false;
-            svg.style.cursor = "grab";
+          // 在 document 级别监听 mouseup，确保在任何位置释放都能停止拖动
+          document.addEventListener("mouseup", function (e) {
+            if (isDragging) {
+              isDragging = false;
+              svg.style.cursor = "grab";
+            }
           });
 
           // 设置初始光标
@@ -612,6 +612,15 @@
             currentMinder.zoom(currentZoom * delta);
           });
 
+          // 保存初始 viewBox 用于变换计算
+          const initialViewBox = svg.getAttribute("viewBox").split(" ");
+          const initialViewBoxValues = {
+            x: parseFloat(initialViewBox[0]),
+            y: parseFloat(initialViewBox[1]),
+            width: parseFloat(initialViewBox[2]),
+            height: parseFloat(initialViewBox[3]),
+          };
+
           currentMinder = {
             svg: svg,
             data: data,
@@ -619,6 +628,7 @@
             zoomLevel: 1,
             panX: 0,
             panY: 0,
+            initialViewBox: initialViewBoxValues,
             useTheme: function (newTheme) {
               renderSimpleMindMap(this.data, newTheme);
             },
@@ -640,24 +650,29 @@
               return { x: this.panX, y: this.panY };
             },
             updateTransform: function () {
-              if (this.svg) {
-                var currentViewBox = this.svg
-                  .getAttribute("viewBox")
-                  .split(" ");
-                var baseX = parseFloat(currentViewBox[0]);
-                var baseY = parseFloat(currentViewBox[1]);
-                var baseWidth = parseFloat(currentViewBox[2]);
-                var baseHeight = parseFloat(currentViewBox[3]);
+              if (this.svg && this.initialViewBox) {
+                // 基于初始 viewBox 计算新的 viewBox
+                var newWidth = this.initialViewBox.width / this.zoomLevel;
+                var newHeight = this.initialViewBox.height / this.zoomLevel;
+                var newX = this.initialViewBox.x + this.panX;
+                var newY = this.initialViewBox.y + this.panY;
 
-                var newWidth = baseWidth / this.zoomLevel;
-                var newHeight = baseHeight / this.zoomLevel;
-                var newX = baseX + this.panX;
-                var newY = baseY + this.panY;
-
-                this.svg.setAttribute(
-                  "viewBox",
-                  newX + " " + newY + " " + newWidth + " " + newHeight,
-                );
+                // 确保所有值都是有效数字
+                if (
+                  !isNaN(newX) &&
+                  !isNaN(newY) &&
+                  !isNaN(newWidth) &&
+                  !isNaN(newHeight) &&
+                  isFinite(newX) &&
+                  isFinite(newY) &&
+                  isFinite(newWidth) &&
+                  isFinite(newHeight)
+                ) {
+                  this.svg.setAttribute(
+                    "viewBox",
+                    newX + " " + newY + " " + newWidth + " " + newHeight,
+                  );
+                }
               }
             },
             fitView: function () {
