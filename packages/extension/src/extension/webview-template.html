@@ -553,6 +553,65 @@
 
           elements.minderCanvas.appendChild(svg);
 
+          // 添加拖动/平移功能
+          let isDragging = false;
+          let dragStartX = 0;
+          let dragStartY = 0;
+          let currentPanX = 0;
+          let currentPanY = 0;
+
+          svg.addEventListener("mousedown", function (e) {
+            if (!isInteractionEnabled) return;
+            isDragging = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            svg.style.cursor = "grabbing";
+            e.preventDefault();
+          });
+
+          svg.addEventListener("mousemove", function (e) {
+            if (!isDragging || !isInteractionEnabled) return;
+
+            const dx = e.clientX - dragStartX;
+            const dy = e.clientY - dragStartY;
+
+            // 根据当前缩放级别调整平移速度
+            const scale = currentMinder.zoomLevel || 1;
+            currentPanX -= dx / scale;
+            currentPanY -= dy / scale;
+
+            currentMinder.panX = currentPanX;
+            currentMinder.panY = currentPanY;
+            currentMinder.updateTransform();
+
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            e.preventDefault();
+          });
+
+          svg.addEventListener("mouseup", function (e) {
+            isDragging = false;
+            svg.style.cursor = "grab";
+          });
+
+          svg.addEventListener("mouseleave", function (e) {
+            isDragging = false;
+            svg.style.cursor = "grab";
+          });
+
+          // 设置初始光标
+          svg.style.cursor = "grab";
+
+          // 添加滚轮缩放支持
+          svg.addEventListener("wheel", function (e) {
+            if (!isInteractionEnabled) return;
+            e.preventDefault();
+
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            const currentZoom = currentMinder.zoom();
+            currentMinder.zoom(currentZoom * delta);
+          });
+
           currentMinder = {
             svg: svg,
             data: data,
@@ -574,6 +633,8 @@
               if (typeof x === "number" && typeof y === "number") {
                 this.panX = x;
                 this.panY = y;
+                currentPanX = x;
+                currentPanY = y;
                 this.updateTransform();
               }
               return { x: this.panX, y: this.panY };
@@ -603,6 +664,8 @@
               this.zoomLevel = 1;
               this.panX = 0;
               this.panY = 0;
+              currentPanX = 0;
+              currentPanY = 0;
               renderSimpleMindMap(this.data, this.theme);
             },
           };
