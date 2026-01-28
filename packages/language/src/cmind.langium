@@ -14,7 +14,7 @@ ThemeMetadata:
     '@theme' '(' value=TEXT ')';
 
 RootNode:
-    '#' text=TEXT (idAttr=IdAttribute)?
+    '#' text=TEXT (starAttr=StarAttribute) (idAttr=IdAttribute)?
     (children+=ChildNode)*;
 
 ChildNode:
@@ -23,6 +23,9 @@ ChildNode:
 
 Attribute:
     IdAttribute | PriorityAttribute | ProgressAttribute | BoldAttribute | ItalicAttribute;
+
+StarAttribute:
+    '@star' '(' value=STAR_NUM ')';
 
 IdAttribute:
     '@id' '(' value=TEXT ')';
@@ -42,7 +45,9 @@ ItalicAttribute:
 // Terminal rules
 hidden terminal WS: /[ \t]+/;
 hidden terminal NL: /[\r\n]+/;
-// INT must be defined first to ensure numbers in attributes are parsed correctly
+// STAR_NUM for star attribute - must be 01-08 (must be defined before INT to avoid conflicts)
+terminal STAR_NUM: /0[1-8]/;
+// INT for numeric attributes
 terminal INT returns number: /[0-9]+/;
 // TEXT captures text content - letters, digits, spaces, hyphens, underscores, and Unicode characters (including Chinese)
 // Used for both node text and metadata values, and also for @id values

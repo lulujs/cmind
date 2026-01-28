@@ -1,7 +1,7 @@
 @template(right)
 @theme(fresh-blue)
 
-# 主题 @id(root001)
+# 主题 @star(01) @id(root001)
   - 节点1 @id(node001)
     - 子节点 @id(node002)
   - 节点1 @id(node003) @progress(2)
