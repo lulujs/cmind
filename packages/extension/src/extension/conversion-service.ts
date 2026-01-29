@@ -601,28 +601,22 @@ export class ConversionService {
           // @number(01-07) -> icons: ["number01"]
           const numberValue = String(attr.value).padStart(2, "0");
           icons.push(`number${numberValue}`);
-        } else {
-          // @number -> icons: ["number"]
-          icons.push("number");
         }
+        // @number without value -> don't add to icons
       } else if (attr.$type === "StarIconAttribute") {
         if (attr.value) {
           // @star(01-08) -> icons: ["star01"]
           const starValue = String(attr.value).padStart(2, "0");
           icons.push(`star${starValue}`);
-        } else {
-          // @star -> icons: ["star"]
-          icons.push("star");
         }
+        // @star without value -> don't add to icons
       } else if (attr.$type === "FlagAttribute") {
         if (attr.value) {
           // @flag(01-08) -> icons: ["flag01"]
           const flagValue = String(attr.value).padStart(2, "0");
           icons.push(`flag${flagValue}`);
-        } else {
-          // @flag -> icons: ["flag"]
-          icons.push("flag");
         }
+        // @flag without value -> don't add to icons
       }
     }
 

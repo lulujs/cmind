@@ -2,7 +2,6 @@ import type { ValidationAcceptor, ValidationChecks } from "langium";
 import type {
   CmindAstType,
   MindMap,
-  PriorityAttribute,
   ProgressAttribute,
   ChildNode,
 } from "./generated/ast.js";
@@ -16,7 +15,6 @@ export function registerValidationChecks(services: CmindServices) {
   const validator = services.validation.CmindValidator;
   const checks: ValidationChecks<CmindAstType> = {
     MindMap: validator.checkMindMap,
-    PriorityAttribute: validator.checkPriorityRange,
     ProgressAttribute: validator.checkProgressRange,
     ChildNode: validator.checkIndentation,
   };
@@ -46,22 +44,6 @@ export class CmindValidator {
       accept("error", "Root node must have a non-empty title", {
         node: mindMap.root,
         property: "text",
-      });
-    }
-  }
-
-  /**
-   * Validate priority attribute is between 1-9.
-   * Requirements: 3.6
-   */
-  checkPriorityRange(
-    attr: PriorityAttribute,
-    accept: ValidationAcceptor,
-  ): void {
-    if (attr.value < 1 || attr.value > 9) {
-      accept("error", "Priority must be between 1 and 9", {
-        node: attr,
-        property: "value",
       });
     }
   }

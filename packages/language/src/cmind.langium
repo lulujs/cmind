@@ -25,38 +25,35 @@ Attribute:
     IdAttribute | ProgressAttribute | ItalicAttribute | NumberAttribute | StarIconAttribute | FlagAttribute;
 
 StarAttribute:
-    '@star' '(' value=NUM_02_08 ')';
+    '@star' '(' value=NUM_VALUE ')';
 
 IdAttribute:
     '@id' '(' value=TEXT ')';
 
 ProgressAttribute:
-    '@progress' ('(' value=NUM_02_08 ')')?;
+    '@progress' ('(' value=NUM_VALUE ')')?;
 
 ItalicAttribute:
     italic?='@italic';
 
 NumberAttribute:
-    '@number' ('(' value=NUM_01_07 ')')?;
+    '@number' ('(' value=NUM_VALUE ')')?;
 
 StarIconAttribute:
-    '@star' ('(' value=NUM_02_08 ')')?;
+    '@star' ('(' value=NUM_VALUE ')')?;
 
 FlagAttribute:
-    '@flag' ('(' value=NUM_02_08 ')')?;
+    '@flag' ('(' value=NUM_VALUE ')')?;
 
 // Terminal rules
-// NUM_02_08 for both star and progress attributes - must be 01-08 (must be defined before INT to avoid conflicts)
-terminal NUM_02_08: /0[1-8]/;
-// NUM_01_07 for number attribute - must be 01-07 (must be defined before INT to avoid conflicts)
-terminal NUM_01_07: /0[1-7]/;
-// INT for numeric attributes
-terminal INT returns number: /[0-9]+/;
+// NUM_VALUE for all numeric values - will be validated semantically
+terminal NUM_VALUE: /0[1-8]/;
 hidden terminal WS: /[ \t]+/;
 hidden terminal NL: /[\r\n]+/;
 // TEXT captures text content - letters, digits, spaces, hyphens, underscores, and Unicode characters (including Chinese)
 // Used for both node text and metadata values, and also for @id values
-terminal TEXT: /[\p{L}\p{N}][\p{L}\p{N} \t_\-]*/u;
+// Must start with a letter to avoid conflicts with NUM_* rules
+terminal TEXT: /[\p{L}][\p{L}\p{N} \t_\-]*/u;
 
 // Comment rules
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

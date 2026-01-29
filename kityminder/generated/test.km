@@ -2,7 +2,7 @@
     "root": {
         "data": {
             "id": "root001",
-            "created": 1769591972010,
+            "created": 1769683482097,
             "text": "完整属性测试主题",
             "icons": [
                 "star03"
@@ -12,14 +12,14 @@
             {
                 "data": {
                     "id": "node001",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "基础节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node002",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "子节点"
                         },
                         "children": []
@@ -29,14 +29,14 @@
             {
                 "data": {
                     "id": "node003",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "优先级节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node004",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "高优先级任务"
                         },
                         "children": []
@@ -44,7 +44,7 @@
                     {
                         "data": {
                             "id": "node005",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "低优先级任务"
                         },
                         "children": []
@@ -54,14 +54,14 @@
             {
                 "data": {
                     "id": "node006",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "进度图标节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node007",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "默认进度图标",
                             "icons": [
                                 "progress"
@@ -72,7 +72,7 @@
                     {
                         "data": {
                             "id": "node008",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "进度图标02",
                             "icons": [
                                 "progress02"
@@ -83,7 +83,7 @@
                     {
                         "data": {
                             "id": "node009",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "进度图标03",
                             "icons": [
                                 "progress03"
@@ -94,7 +94,7 @@
                     {
                         "data": {
                             "id": "node010",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "进度图标08",
                             "icons": [
                                 "progress08"
@@ -107,14 +107,14 @@
             {
                 "data": {
                     "id": "node011",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "数字图标节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node012",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "默认数字图标"
                         },
                         "children": []
@@ -122,7 +122,7 @@
                     {
                         "data": {
                             "id": "node013",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "数字图标01",
                             "icons": [
                                 "number01"
@@ -133,7 +133,7 @@
                     {
                         "data": {
                             "id": "node014",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "数字图标03",
                             "icons": [
                                 "number03"
@@ -144,7 +144,7 @@
                     {
                         "data": {
                             "id": "node015",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "数字图标07",
                             "icons": [
                                 "number07"
@@ -157,14 +157,14 @@
             {
                 "data": {
                     "id": "node016",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "星级图标节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node017",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "默认星级图标"
                         },
                         "children": []
@@ -172,7 +172,7 @@
                     {
                         "data": {
                             "id": "node018",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "星级图标01",
                             "icons": [
                                 "star01"
@@ -183,7 +183,7 @@
                     {
                         "data": {
                             "id": "node019",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "星级图标05",
                             "icons": [
                                 "star05"
@@ -194,7 +194,7 @@
                     {
                         "data": {
                             "id": "node020",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "星级图标08",
                             "icons": [
                                 "star08"
@@ -207,14 +207,14 @@
             {
                 "data": {
                     "id": "node021",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "标志图标节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node022",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "默认标志图标"
                         },
                         "children": []
@@ -222,7 +222,7 @@
                     {
                         "data": {
                             "id": "node023",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "标志图标01",
                             "icons": [
                                 "flag01"
@@ -233,7 +233,7 @@
                     {
                         "data": {
                             "id": "node024",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "标志图标04",
                             "icons": [
                                 "flag04"
@@ -244,7 +244,7 @@
                     {
                         "data": {
                             "id": "node025",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "标志图标08",
                             "icons": [
                                 "flag08"
@@ -257,14 +257,14 @@
             {
                 "data": {
                     "id": "node026",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "格式化节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node027",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "粗体文本"
                         },
                         "children": []
@@ -272,7 +272,7 @@
                     {
                         "data": {
                             "id": "node028",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "斜体文本",
                             "font-style": "italic"
                         },
@@ -281,7 +281,7 @@
                     {
                         "data": {
                             "id": "node029",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "粗斜体文本",
                             "font-style": "italic"
                         },
@@ -292,7 +292,7 @@
             {
                 "data": {
                     "id": "node030",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "组合属性节点",
                     "icons": [
                         "progress05",
@@ -305,7 +305,7 @@
                     {
                         "data": {
                             "id": "node031",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "完整属性子节点",
                             "font-style": "italic",
                             "icons": [
@@ -317,7 +317,7 @@
                     {
                         "data": {
                             "id": "node032",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "多图标任务A",
                             "icons": [
                                 "number01",
@@ -330,7 +330,7 @@
                     {
                         "data": {
                             "id": "node033",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "多图标任务B",
                             "font-style": "italic",
                             "icons": [
@@ -346,14 +346,14 @@
             {
                 "data": {
                     "id": "node034",
-                    "created": 1769591972010,
+                    "created": 1769683482096,
                     "text": "中英文混合"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node035",
-                            "created": 1769591972010,
+                            "created": 1769683482096,
                             "text": "English Task",
                             "icons": [
                                 "star04"
@@ -364,7 +364,7 @@
                     {
                         "data": {
                             "id": "node036",
-                            "created": 1769591972010,
+                            "created": 1769683482097,
                             "text": "中文任务",
                             "font-style": "italic",
                             "icons": [
@@ -377,7 +377,7 @@
                     {
                         "data": {
                             "id": "node037",
-                            "created": 1769591972010,
+                            "created": 1769683482097,
                             "text": "Mixed中英文Task",
                             "font-style": "italic",
                             "icons": [

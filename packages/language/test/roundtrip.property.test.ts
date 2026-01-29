@@ -9,9 +9,7 @@ import type {
   Metadata,
 } from "../src/generated/ast.js";
 import {
-  isPriorityAttribute,
   isProgressAttribute,
-  isBoldAttribute,
   isItalicAttribute,
   isTemplateMetadata,
   isThemeMetadata,
