@@ -6,11 +6,12 @@ import type {
   Metadata,
 } from "cmind-language";
 import {
-  isPriorityAttribute,
   isProgressAttribute,
-  isBoldAttribute,
   isItalicAttribute,
   isIdAttribute,
+  isNumberAttribute,
+  isStarIconAttribute,
+  isFlagAttribute,
   isTemplateMetadata,
   isThemeMetadata,
 } from "cmind-language";
@@ -35,9 +36,7 @@ export interface KityMinderNodeData {
   id: string;
   created: number;
   text: string;
-  priority?: string;
   progress?: number;
-  "font-weight"?: "bold";
   "font-style"?: "italic";
   icons?: string[];
 }
@@ -113,23 +112,51 @@ function getExplicitId(attributes: Attribute[]): string | undefined {
 /**
  * Maps AST attributes to KityMinder node data fields
  */
-function mapAttributes(attributes: Attribute[]): Partial<KityMinderNodeData> {
+function mapAttributes(attributes: Attribute[]): {
+  data: Partial<KityMinderNodeData>;
+  icons: string[];
+} {
   const result: Partial<KityMinderNodeData> = {};
+  const icons: string[] = [];
 
   for (const attr of attributes) {
-    if (isPriorityAttribute(attr)) {
-      result.priority = String(attr.value);
-    } else if (isProgressAttribute(attr)) {
-      result.progress = attr.value;
-    } else if (isBoldAttribute(attr)) {
-      result["font-weight"] = "bold";
+    if (isProgressAttribute(attr)) {
+      if (attr.value) {
+        // @progress(02-08) -> icons: ["progress02"]
+        const progressValue = String(attr.value).padStart(2, "0");
+        icons.push(`progress${progressValue}`);
+      } else {
+        // @progress -> icons: ["progress"]
+        icons.push("progress");
+      }
     } else if (isItalicAttribute(attr)) {
       result["font-style"] = "italic";
+    } else if (isNumberAttribute(attr)) {
+      if (attr.value) {
+        // @number(01-07) -> icons: ["number01"]
+        const numberValue = String(attr.value).padStart(2, "0");
+        icons.push(`number${numberValue}`);
+      }
+      // @number without value -> don't add to icons
+    } else if (isStarIconAttribute(attr)) {
+      if (attr.value) {
+        // @star(01-08) -> icons: ["star01"]
+        const starValue = String(attr.value).padStart(2, "0");
+        icons.push(`star${starValue}`);
+      }
+      // @star without value -> don't add to icons
+    } else if (isFlagAttribute(attr)) {
+      if (attr.value) {
+        // @flag(01-08) -> icons: ["flag01"]
+        const flagValue = String(attr.value).padStart(2, "0");
+        icons.push(`flag${flagValue}`);
+      }
+      // @flag without value -> don't add to icons
     }
     // Note: IdAttribute is handled separately, not stored in data
   }
 
-  return result;
+  return { data: result, icons };
 }
 
 /**
@@ -193,7 +220,9 @@ function flattenChildNodes(nodes: ChildNode[]): FlatNode[] {
  * Converts a FlatNode to KityMinder node format
  */
 function convertFlatNode(flatNode: FlatNode): KityMinderNode {
-  const attributeData = mapAttributes(flatNode.attributes);
+  const { data: attributeData, icons: attributeIcons } = mapAttributes(
+    flatNode.attributes,
+  );
 
   return {
     data: {
@@ -201,6 +230,7 @@ function convertFlatNode(flatNode: FlatNode): KityMinderNode {
       created: generateTimestamp(),
       text: flatNode.text.trim(),
       ...attributeData,
+      ...(attributeIcons.length > 0 && { icons: attributeIcons }),
     },
     children: [],
   };

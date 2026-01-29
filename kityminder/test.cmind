@@ -1,16 +1,41 @@
 @template(right)
 @theme(fresh-blue)
 
-# 主题 @star(01) @id(root001)
-  - 节点1 @id(node001)
+# 完整属性测试主题 @star(03) @id(root001)
+  - 基础节点 @id(node001)
     - 子节点 @id(node002)
-  - 节点1 @id(node003) @progress(2)
-    - 任务A @id(node004)
-    - 任务B @id(node005)
-      - 详情 @id(node006)
-  - English @id(node007)
-    - 混合中英文test @id(node008)
-    - abc @id(node009)
-    - d3 @id(node010)
-    - defe @progress(1)
-    - abd @id(node011)
+  - 优先级节点 @id(node003)
+    - 高优先级任务 @id(node004)
+    - 低优先级任务 @id(node005)
+  - 进度图标节点 @id(node006)
+    - 默认进度图标 @id(node007) @progress
+    - 进度图标02 @id(node008) @progress(02)
+    - 进度图标03 @id(node009) @progress(03)
+    - 进度图标08 @id(node010) @progress(08)
+  - 数字图标节点 @id(node011)
+    - 默认数字图标 @id(node012) @number
+    - 数字图标01 @id(node013) @number(01)
+    - 数字图标03 @id(node014) @number(03)
+    - 数字图标07 @id(node015) @number(07)
+  - 星级图标节点 @id(node016)
+    - 默认星级图标 @id(node017) @star
+    - 星级图标01 @id(node018) @star(01)
+    - 星级图标05 @id(node019) @star(05)
+    - 星级图标08 @id(node020) @star(08)
+  - 标志图标节点 @id(node021)
+    - 默认标志图标 @id(node022) @flag
+    - 标志图标01 @id(node023) @flag(01)
+    - 标志图标04 @id(node024) @flag(04)
+    - 标志图标08 @id(node025) @flag(08)
+  - 格式化节点 @id(node026)
+    - 粗体文本 @id(node027)
+    - 斜体文本 @id(node028) @italic
+    - 粗斜体文本 @id(node029) @italic
+  - 组合属性节点 @id(node030) @progress(05) @number(03) @star(02) @flag(06)
+    - 完整属性子节点 @id(node031) @progress @number @star @flag @italic
+    - 多图标任务A @id(node032) @number(01) @star(03) @flag(05)
+    - 多图标任务B @id(node033) @progress(07) @number(02) @flag(01) @italic
+  - 中英文混合 @id(node034)
+    - English Task @id(node035) @star(04)
+    - 中文任务 @id(node036) @progress(04) @number(07) @italic
+    - Mixed中英文Task @id(node037) @flag(03) @italic

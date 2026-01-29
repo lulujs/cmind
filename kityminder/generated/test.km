@@ -2,24 +2,24 @@
     "root": {
         "data": {
             "id": "root001",
-            "created": 1769590877933,
-            "text": "主题",
+            "created": 1769591972010,
+            "text": "完整属性测试主题",
             "icons": [
-                "star01"
+                "star03"
             ]
         },
         "children": [
             {
                 "data": {
                     "id": "node001",
-                    "created": 1769590877933,
-                    "text": "节点1"
+                    "created": 1769591972010,
+                    "text": "基础节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node002",
-                            "created": 1769590877933,
+                            "created": 1769591972010,
                             "text": "子节点"
                         },
                         "children": []
@@ -29,83 +29,360 @@
             {
                 "data": {
                     "id": "node003",
-                    "created": 1769590877933,
-                    "text": "节点1",
-                    "progress": 2
+                    "created": 1769591972010,
+                    "text": "优先级节点"
                 },
                 "children": [
                     {
                         "data": {
                             "id": "node004",
-                            "created": 1769590877933,
-                            "text": "任务A"
+                            "created": 1769591972010,
+                            "text": "高优先级任务"
                         },
                         "children": []
                     },
                     {
                         "data": {
                             "id": "node005",
-                            "created": 1769590877933,
-                            "text": "任务B"
+                            "created": 1769591972010,
+                            "text": "低优先级任务"
                         },
-                        "children": [
-                            {
-                                "data": {
-                                    "id": "node006",
-                                    "created": 1769590877933,
-                                    "text": "详情"
-                                },
-                                "children": []
-                            }
-                        ]
+                        "children": []
                     }
                 ]
             },
             {
                 "data": {
-                    "id": "node007",
-                    "created": 1769590877933,
-                    "text": "English"
+                    "id": "node006",
+                    "created": 1769591972010,
+                    "text": "进度图标节点"
                 },
                 "children": [
                     {
                         "data": {
+                            "id": "node007",
+                            "created": 1769591972010,
+                            "text": "默认进度图标",
+                            "icons": [
+                                "progress"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
                             "id": "node008",
-                            "created": 1769590877933,
-                            "text": "混合中英文test"
+                            "created": 1769591972010,
+                            "text": "进度图标02",
+                            "icons": [
+                                "progress02"
+                            ]
                         },
                         "children": []
                     },
                     {
                         "data": {
                             "id": "node009",
-                            "created": 1769590877933,
-                            "text": "abc"
+                            "created": 1769591972010,
+                            "text": "进度图标03",
+                            "icons": [
+                                "progress03"
+                            ]
                         },
                         "children": []
                     },
                     {
                         "data": {
                             "id": "node010",
-                            "created": 1769590877933,
-                            "text": "d3"
+                            "created": 1769591972010,
+                            "text": "进度图标08",
+                            "icons": [
+                                "progress08"
+                            ]
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node011",
+                    "created": 1769591972010,
+                    "text": "数字图标节点"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node012",
+                            "created": 1769591972010,
+                            "text": "默认数字图标"
                         },
                         "children": []
                     },
                     {
                         "data": {
-                            "id": "lduoc2xnj6sb",
-                            "created": 1769590877933,
-                            "text": "defe",
-                            "progress": 1
+                            "id": "node013",
+                            "created": 1769591972010,
+                            "text": "数字图标01",
+                            "icons": [
+                                "number01"
+                            ]
                         },
                         "children": []
                     },
                     {
                         "data": {
-                            "id": "node011",
-                            "created": 1769590877933,
-                            "text": "abd"
+                            "id": "node014",
+                            "created": 1769591972010,
+                            "text": "数字图标03",
+                            "icons": [
+                                "number03"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node015",
+                            "created": 1769591972010,
+                            "text": "数字图标07",
+                            "icons": [
+                                "number07"
+                            ]
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node016",
+                    "created": 1769591972010,
+                    "text": "星级图标节点"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node017",
+                            "created": 1769591972010,
+                            "text": "默认星级图标"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node018",
+                            "created": 1769591972010,
+                            "text": "星级图标01",
+                            "icons": [
+                                "star01"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node019",
+                            "created": 1769591972010,
+                            "text": "星级图标05",
+                            "icons": [
+                                "star05"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node020",
+                            "created": 1769591972010,
+                            "text": "星级图标08",
+                            "icons": [
+                                "star08"
+                            ]
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node021",
+                    "created": 1769591972010,
+                    "text": "标志图标节点"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node022",
+                            "created": 1769591972010,
+                            "text": "默认标志图标"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node023",
+                            "created": 1769591972010,
+                            "text": "标志图标01",
+                            "icons": [
+                                "flag01"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node024",
+                            "created": 1769591972010,
+                            "text": "标志图标04",
+                            "icons": [
+                                "flag04"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node025",
+                            "created": 1769591972010,
+                            "text": "标志图标08",
+                            "icons": [
+                                "flag08"
+                            ]
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node026",
+                    "created": 1769591972010,
+                    "text": "格式化节点"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node027",
+                            "created": 1769591972010,
+                            "text": "粗体文本"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node028",
+                            "created": 1769591972010,
+                            "text": "斜体文本",
+                            "font-style": "italic"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node029",
+                            "created": 1769591972010,
+                            "text": "粗斜体文本",
+                            "font-style": "italic"
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node030",
+                    "created": 1769591972010,
+                    "text": "组合属性节点",
+                    "icons": [
+                        "progress05",
+                        "number03",
+                        "star02",
+                        "flag06"
+                    ]
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node031",
+                            "created": 1769591972010,
+                            "text": "完整属性子节点",
+                            "font-style": "italic",
+                            "icons": [
+                                "progress"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node032",
+                            "created": 1769591972010,
+                            "text": "多图标任务A",
+                            "icons": [
+                                "number01",
+                                "star03",
+                                "flag05"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node033",
+                            "created": 1769591972010,
+                            "text": "多图标任务B",
+                            "font-style": "italic",
+                            "icons": [
+                                "progress07",
+                                "number02",
+                                "flag01"
+                            ]
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "node034",
+                    "created": 1769591972010,
+                    "text": "中英文混合"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "node035",
+                            "created": 1769591972010,
+                            "text": "English Task",
+                            "icons": [
+                                "star04"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node036",
+                            "created": 1769591972010,
+                            "text": "中文任务",
+                            "font-style": "italic",
+                            "icons": [
+                                "progress04",
+                                "number07"
+                            ]
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "node037",
+                            "created": 1769591972010,
+                            "text": "Mixed中英文Task",
+                            "font-style": "italic",
+                            "icons": [
+                                "flag03"
+                            ]
                         },
                         "children": []
                     }

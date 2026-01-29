@@ -561,7 +561,9 @@ export class ConversionService {
    * Converts a flat node to KityMinder node format
    */
   private convertFlatNode(flatNode: any): any {
-    const attributeData = this.mapAttributes(flatNode.attributes);
+    const { data: attributeData, icons: attributeIcons } = this.mapAttributes(
+      flatNode.attributes,
+    );
 
     return {
       data: {
@@ -569,6 +571,7 @@ export class ConversionService {
         created: Date.now(),
         text: flatNode.text.trim(),
         ...attributeData,
+        ...(attributeIcons.length > 0 && { icons: attributeIcons }),
       },
       children: [],
     };
@@ -577,22 +580,53 @@ export class ConversionService {
   /**
    * Maps AST attributes to KityMinder node data fields
    */
-  private mapAttributes(attributes: any[]): any {
+  private mapAttributes(attributes: any[]): { data: any; icons: string[] } {
     const result: any = {};
+    const icons: string[] = [];
 
     for (const attr of attributes) {
-      if (attr.$type === "PriorityAttribute") {
-        result.priority = String(attr.value);
-      } else if (attr.$type === "ProgressAttribute") {
-        result.progress = attr.value;
-      } else if (attr.$type === "BoldAttribute") {
-        result["font-weight"] = "bold";
+      if (attr.$type === "ProgressAttribute") {
+        if (attr.value) {
+          // @progress(02-08) -> icons: ["progress02"]
+          const progressValue = String(attr.value).padStart(2, "0");
+          icons.push(`progress${progressValue}`);
+        } else {
+          // @progress -> icons: ["progress"]
+          icons.push("progress");
+        }
       } else if (attr.$type === "ItalicAttribute") {
         result["font-style"] = "italic";
+      } else if (attr.$type === "NumberAttribute") {
+        if (attr.value) {
+          // @number(01-07) -> icons: ["number01"]
+          const numberValue = String(attr.value).padStart(2, "0");
+          icons.push(`number${numberValue}`);
+        } else {
+          // @number -> icons: ["number"]
+          icons.push("number");
+        }
+      } else if (attr.$type === "StarIconAttribute") {
+        if (attr.value) {
+          // @star(01-08) -> icons: ["star01"]
+          const starValue = String(attr.value).padStart(2, "0");
+          icons.push(`star${starValue}`);
+        } else {
+          // @star -> icons: ["star"]
+          icons.push("star");
+        }
+      } else if (attr.$type === "FlagAttribute") {
+        if (attr.value) {
+          // @flag(01-08) -> icons: ["flag01"]
+          const flagValue = String(attr.value).padStart(2, "0");
+          icons.push(`flag${flagValue}`);
+        } else {
+          // @flag -> icons: ["flag"]
+          icons.push("flag");
+        }
       }
     }
 
-    return result;
+    return { data: result, icons };
   }
 
   /**
