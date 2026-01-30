@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import { KityMinderData } from "./memory-cache-service.js";
+import { iconMap } from "./img/DocImageMapping.js";
 
 /**
  * Service for integrating KityMinder WebUI components with VSCode webviews
@@ -69,6 +70,9 @@ export class WebUIIntegrationService {
         "{{INITIAL_DATA_SCRIPT}}",
         data
           ? `<script>
+        // Inject iconMap into global scope
+        window.iconMap = ${JSON.stringify(iconMap)};
+        
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 window.postMessage({
@@ -79,7 +83,10 @@ export class WebUIIntegrationService {
             }, 100);
         });
     </script>`
-          : "",
+          : `<script>
+        // Inject iconMap into global scope even when no data
+        window.iconMap = ${JSON.stringify(iconMap)};
+    </script>`,
       );
 
     return html;

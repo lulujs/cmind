@@ -78,20 +78,6 @@ describe("Parsing CMind DSL", () => {
   });
 
   describe("Attribute Parsing (Requirements 3.1, 3.2, 3.3, 3.4)", () => {
-    test("parse node with priority attribute", async () => {
-      document = await parse(`# Topic
-- task @priority(5)`);
-
-      expect(checkDocumentValid(document)).toBeUndefined();
-      const child = document.parseResult.value.root.children[0];
-      expect(child.attributes).toHaveLength(1);
-      const attr = child.attributes[0];
-      expect(isPriorityAttribute(attr)).toBe(true);
-      if (isPriorityAttribute(attr)) {
-        expect(attr.value).toBe(5);
-      }
-    });
-
     test("parse node with progress attribute", async () => {
       document = await parse(`# Topic
 - task @progress(3)`);
@@ -103,20 +89,6 @@ describe("Parsing CMind DSL", () => {
       expect(isProgressAttribute(attr)).toBe(true);
       if (isProgressAttribute(attr)) {
         expect(attr.value).toBe(3);
-      }
-    });
-
-    test("parse node with bold attribute", async () => {
-      document = await parse(`# Topic
-- task @bold`);
-
-      expect(checkDocumentValid(document)).toBeUndefined();
-      const child = document.parseResult.value.root.children[0];
-      expect(child.attributes).toHaveLength(1);
-      const attr = child.attributes[0];
-      expect(isBoldAttribute(attr)).toBe(true);
-      if (isBoldAttribute(attr)) {
-        expect(attr.bold).toBe(true);
       }
     });
 
@@ -136,20 +108,16 @@ describe("Parsing CMind DSL", () => {
 
     test("parse node with multiple attributes", async () => {
       document = await parse(`# Topic
-- task @priority(1) @progress(5) @bold @italic`);
+- task @progress(5) @italic`);
 
       expect(checkDocumentValid(document)).toBeUndefined();
       const child = document.parseResult.value.root.children[0];
-      expect(child.attributes).toHaveLength(4);
+      expect(child.attributes).toHaveLength(2);
 
-      const hasPriority = child.attributes.some((a) => isPriorityAttribute(a));
       const hasProgress = child.attributes.some((a) => isProgressAttribute(a));
-      const hasBold = child.attributes.some((a) => isBoldAttribute(a));
       const hasItalic = child.attributes.some((a) => isItalicAttribute(a));
 
-      expect(hasPriority).toBe(true);
       expect(hasProgress).toBe(true);
-      expect(hasBold).toBe(true);
       expect(hasItalic).toBe(true);
     });
   });

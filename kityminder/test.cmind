@@ -1,7 +1,7 @@
 @template(right)
 @theme(fresh-blue)
 
-# 完整属性测试主题 @star(03) @id(root001)
+# 完整属性测试主题 @star(01) @id(root001)
   - 基础节点 @id(node001)
     - 子节点 @id(node002)
   - 优先级节点 @id(node003)

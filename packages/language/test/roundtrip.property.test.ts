@@ -199,12 +199,8 @@ function extractChildNodeData(node: ChildNode): ChildNodeData {
 }
 
 function extractAttributeData(attr: Attribute): AttributeData {
-  if (isPriorityAttribute(attr)) {
-    return { type: "priority", value: attr.value };
-  } else if (isProgressAttribute(attr)) {
+  if (isProgressAttribute(attr)) {
     return { type: "progress", value: attr.value };
-  } else if (isBoldAttribute(attr)) {
-    return { type: "bold" };
   } else if (isItalicAttribute(attr)) {
     return { type: "italic" };
   }
